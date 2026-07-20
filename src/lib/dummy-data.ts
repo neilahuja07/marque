@@ -1,0 +1,588 @@
+export type ProductType = "Past Paper" | "Mock Test" | "Worksheet" | "Revision Notes";
+
+export type ProductReview = {
+  name: string;
+  role: string;
+  rating: number;
+  date: string;
+  text: string;
+};
+
+export type Product = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  subject: string;
+  level: string;
+  examCode: string;
+  type: ProductType;
+  price: number;
+  originalPrice?: number;
+  rating: number;
+  reviewCount: number;
+  pages: number;
+  downloads: number;
+  cover: string;
+  bestseller: boolean;
+  tags: string[];
+  author: string;
+  updatedAt: string;
+  examBoard?: string;
+  session?: string;
+  language?: string;
+  format?: string;
+  version?: string;
+  longDescription?: string;
+  whatsIncluded?: string[];
+  syllabusCoverage?: string[];
+  ratingDistribution?: { stars: number; count: number }[];
+  reviews?: ProductReview[];
+  productFaqs?: FAQ[];
+};
+
+export type Category = {
+  name: string;
+  slug: string;
+  description: string;
+  count: number;
+  accent: "sage" | "teal" | "brass";
+};
+
+export type Testimonial = {
+  name: string;
+  role: string;
+  quote: string;
+};
+
+export type Stat = {
+  value: string;
+  label: string;
+};
+
+export type FAQ = {
+  question: string;
+  answer: string;
+};
+
+export type Order = {
+  id: string;
+  date: string;
+  total: number;
+  status: "completed" | "pending" | "refunded";
+  items: { title: string; price: number }[];
+};
+
+export const stats: Stat[] = [
+  { value: "1,256", label: "Resources catalogued" },
+  { value: "2015–2025", label: "Past paper sessions covered" },
+  { value: "64", label: "Countries studying with us" },
+  { value: "4.8/5", label: "Average rating" },
+];
+
+export const categories: Category[] = [
+  {
+    name: "Mathematics",
+    slug: "mathematics",
+    description: "IGCSE, O Level and A Level — algebra to statistics.",
+    count: 428,
+    accent: "sage",
+  },
+  {
+    name: "Science",
+    slug: "science",
+    description: "Physics, Chemistry and Biology, all levels.",
+    count: 512,
+    accent: "teal",
+  },
+  {
+    name: "English",
+    slug: "english",
+    description: "First and second language, literature included.",
+    count: 316,
+    accent: "brass",
+  },
+];
+
+export const products: Product[] = [
+  {
+    id: "1",
+    slug: "igcse-mathematics-paper-4-worked-solutions",
+    title: "IGCSE Mathematics Paper 4 — Worked Solutions Pack",
+    description: "Complete worked solutions for IGCSE Mathematics Paper 4 (Extended). Each question is solved step-by-step with examiner-style marking annotations, showing multiple approaches where applicable.",
+    subject: "Mathematics",
+    level: "IGCSE",
+    examCode: "0580/42/M/J/25",
+    type: "Past Paper",
+    price: 6.5,
+    originalPrice: 9.0,
+    rating: 4.9,
+    reviewCount: 312,
+    pages: 48,
+    downloads: 8420,
+    cover: "from-teal-dark to-ink",
+    bestseller: true,
+    tags: ["algebra", "paper 4", "extended"],
+    author: "Dr. Sarah Chen",
+    updatedAt: "2025-05-15",
+    examBoard: "Cambridge Assessment International Education",
+    session: "May/June 2025",
+    language: "English",
+    format: "PDF",
+    version: "1.2",
+    longDescription: "This worked solutions pack provides complete, examiner-quality solutions for every question on the IGCSE Mathematics Paper 4 (Extended) from the May/June 2025 session. Each solution is presented step-by-step with clear working, marking annotations, and alternative approaches where applicable.\n\nDesigned for students preparing for their IGCSE examinations, this resource helps you understand not just the answer, but the reasoning behind each step. Common mistakes are flagged, and examiner tips highlight where marks are typically gained or lost.\n\nWhether you are self-studying or using this alongside classroom learning, these worked solutions will deepen your understanding and improve your exam technique.",
+    whatsIncluded: [
+      "PDF Download",
+      "Worked Solutions",
+      "Mark Scheme",
+      "Instant Access",
+      "Lifetime Access",
+      "Free Updates",
+    ],
+    syllabusCoverage: [
+      "Algebra",
+      "Trigonometry",
+      "Geometry",
+      "Statistics",
+      "Probability",
+      "Mensuration",
+      "Vectors",
+      "Functions",
+      "Number",
+      "Coordinate Geometry",
+    ],
+    ratingDistribution: [
+      { stars: 5, count: 268 },
+      { stars: 4, count: 34 },
+      { stars: 3, count: 7 },
+      { stars: 2, count: 2 },
+      { stars: 1, count: 1 },
+    ],
+    reviews: [
+      {
+        name: "Amara Osei",
+        role: "IGCSE Student, Accra",
+        rating: 5,
+        date: "2025-06-01",
+        text: "The worked solutions actually explain the method, not just the answer. My paper 4 grade moved from a C to an A in one term. The examiner annotations really help you understand what markers are looking for.",
+      },
+      {
+        name: "James Mitchell",
+        role: "Parent, London",
+        rating: 5,
+        date: "2025-05-28",
+        text: "Bought this for my daughter and her confidence has grown massively. The step-by-step approach makes even the hardest questions manageable. Worth every penny.",
+      },
+      {
+        name: "Fatima Al-Hassan",
+        role: "Maths Tutor, Dubai",
+        rating: 5,
+        date: "2025-05-22",
+        text: "I use these worked solutions with all my students. The quality is genuinely examiner-level — not the rough approximations you find elsewhere. Highly recommended.",
+      },
+      {
+        name: "Daniel Cho",
+        role: "Student, Singapore",
+        rating: 4,
+        date: "2025-05-18",
+        text: "Very thorough solutions. Would love to see a version with video walkthroughs as well, but the written solutions are excellent as they are.",
+      },
+      {
+        name: "Priya Sharma",
+        role: "IGCSE Student, Mumbai",
+        rating: 5,
+        date: "2025-05-12",
+        text: "The best investment I made for my exams. Every question is covered and the alternative methods shown really helped me find approaches that worked for me.",
+      },
+      {
+        name: "Lucas Fernandes",
+        role: "Parent, São Paulo",
+        rating: 5,
+        date: "2025-05-08",
+        text: "Clear, well-organized, and accurate. My son used this alongside his textbook and his practice scores improved significantly.",
+      },
+    ],
+    productFaqs: [
+      {
+        question: "How do I download the resource?",
+        answer: "After completing your purchase, the PDF will be available instantly in your dashboard. You can download it from the Downloads page at any time.",
+      },
+      {
+        question: "Can I print the worked solutions?",
+        answer: "Yes. The PDF is formatted for both screen reading and printing. You can print individual pages or the entire document.",
+      },
+      {
+        question: "Does this include the original question paper?",
+        answer: "This pack contains worked solutions and mark schemes. The original question paper can be downloaded free from the Cambridge website.",
+      },
+      {
+        question: "Will I receive updates if corrections are made?",
+        answer: "Yes. You will receive free updates whenever we make improvements or corrections to the solutions. Updated versions will appear in your dashboard.",
+      },
+      {
+        question: "Is this suitable for self-study?",
+        answer: "Absolutely. The step-by-step format is designed to be understood without a teacher, though it works equally well as a classroom resource.",
+      },
+    ],
+  },
+  {
+    id: "2",
+    slug: "igcse-physics-complete-revision-notes",
+    title: "IGCSE Physics — Complete Revision Notes",
+    description: "Comprehensive revision notes covering the entire IGCSE Physics syllabus. Includes diagrams, formula sheets, and worked examples for every topic.",
+    subject: "Science",
+    level: "IGCSE",
+    examCode: "0625/RN/24",
+    type: "Revision Notes",
+    price: 8.0,
+    rating: 4.8,
+    reviewCount: 501,
+    pages: 96,
+    downloads: 6250,
+    cover: "from-teal to-teal-dark",
+    bestseller: true,
+    tags: ["physics", "revision", "complete"],
+    author: "James Wright",
+    updatedAt: "2024-11-20",
+  },
+  {
+    id: "3",
+    slug: "o-level-english-ten-year-pack",
+    title: "O Level English 1123 — Ten-Year Past Paper Pack",
+    description: "A complete collection of O Level English 1123 past papers from the last ten years, with full mark schemes and examiner reports.",
+    subject: "English",
+    level: "O Level",
+    examCode: "1123/DECADE",
+    type: "Past Paper",
+    price: 11.0,
+    originalPrice: 15.0,
+    rating: 4.9,
+    reviewCount: 674,
+    pages: 210,
+    downloads: 5840,
+    cover: "from-ink to-teal-dark",
+    bestseller: true,
+    tags: ["english", "past papers", "decade"],
+    author: "Prof. Amara Osei",
+    updatedAt: "2025-02-10",
+  },
+  {
+    id: "4",
+    slug: "a-level-chemistry-mock-tests",
+    title: "A Level Chemistry — Mock Test Bundle",
+    description: "Twelve mock tests designed to mirror the format and difficulty of Cambridge A Level Chemistry papers. Includes detailed mark schemes.",
+    subject: "Science",
+    level: "A Level",
+    examCode: "9701/MOCK",
+    type: "Mock Test",
+    price: 12.5,
+    originalPrice: 16.0,
+    rating: 4.7,
+    reviewCount: 189,
+    pages: 72,
+    downloads: 3210,
+    cover: "from-teal-dark to-teal",
+    bestseller: false,
+    tags: ["chemistry", "mock test", "A level"],
+    author: "Dr. Priya Nair",
+    updatedAt: "2025-04-01",
+  },
+  {
+    id: "5",
+    slug: "igcse-mathematics-worksheets",
+    title: "IGCSE Mathematics — Topic Worksheets (200+ pages)",
+    description: "Over 200 pages of topic-specific worksheets covering every area of the IGCSE Mathematics syllabus. Perfect for targeted practice.",
+    subject: "Mathematics",
+    level: "IGCSE",
+    examCode: "0580/WS",
+    type: "Worksheet",
+    price: 9.5,
+    rating: 4.6,
+    reviewCount: 245,
+    pages: 214,
+    downloads: 4100,
+    cover: "from-sage to-teal-dark",
+    bestseller: false,
+    tags: ["mathematics", "worksheets", "practice"],
+    author: "Dr. Sarah Chen",
+    updatedAt: "2025-03-18",
+  },
+  {
+    id: "6",
+    slug: "igcse-biology-revision-flashcards",
+    title: "IGCSE Biology — Revision Flashcards",
+    description: "Digital flashcards covering key definitions, processes, and diagrams from the IGCSE Biology syllabus. Active recall made easy.",
+    subject: "Science",
+    level: "IGCSE",
+    examCode: "0610/FC/24",
+    type: "Revision Notes",
+    price: 5.0,
+    rating: 4.8,
+    reviewCount: 378,
+    pages: 64,
+    downloads: 7200,
+    cover: "from-teal to-sage",
+    bestseller: true,
+    tags: ["biology", "flashcards", "revision"],
+    author: "Lisa Park",
+    updatedAt: "2025-01-25",
+  },
+  {
+    id: "7",
+    slug: "o-level-mathematics-past-papers-2018-2024",
+    title: "O Level Mathematics 4024 — Past Papers 2018–2024",
+    description: "Seven years of O Level Mathematics past papers with full worked solutions and examiner commentary.",
+    subject: "Mathematics",
+    level: "O Level",
+    examCode: "4024/PAST",
+    type: "Past Paper",
+    price: 14.0,
+    originalPrice: 18.0,
+    rating: 4.7,
+    reviewCount: 432,
+    pages: 186,
+    downloads: 3980,
+    cover: "from-ink to-sage",
+    bestseller: false,
+    tags: ["mathematics", "past papers", "O level"],
+    author: "Dr. Sarah Chen",
+    updatedAt: "2025-06-02",
+  },
+  {
+    id: "8",
+    slug: "a-level-physics-mock-exams",
+    title: "A Level Physics — Full Mock Exam Series",
+    description: "Six complete mock exams modelled on recent Cambridge A Level Physics papers. Detailed mark schemes with common error annotations.",
+    subject: "Science",
+    level: "A Level",
+    examCode: "9702/MOCK/25",
+    type: "Mock Test",
+    price: 15.0,
+    rating: 4.9,
+    reviewCount: 267,
+    downloads: 2890,
+    pages: 84,
+    cover: "from-teal-dark to-ink",
+    bestseller: false,
+    tags: ["physics", "mock test", "A level"],
+    author: "James Wright",
+    updatedAt: "2025-05-20",
+  },
+  {
+    id: "9",
+    slug: "igcse-english-language-worksheets",
+    title: "IGCSE English Language — Writing Worksheets",
+    description: "Targeted worksheets for IGCSE English Language papers covering comprehension, directed writing, and composition skills.",
+    subject: "English",
+    level: "IGCSE",
+    examCode: "0500/WS/25",
+    type: "Worksheet",
+    price: 7.5,
+    rating: 4.5,
+    reviewCount: 198,
+    pages: 78,
+    downloads: 2340,
+    cover: "from-brass to-ink",
+    bestseller: false,
+    tags: ["english", "writing", "worksheets"],
+    author: "Prof. Amara Osei",
+    updatedAt: "2025-04-10",
+  },
+  {
+    id: "10",
+    slug: "a-level-mathematics-further-notes",
+    title: "A Level Further Mathematics — Revision Notes",
+    description: "Comprehensive revision notes for Cambridge A Level Further Mathematics. Covers further pure, mechanics, and statistics modules.",
+    subject: "Mathematics",
+    level: "A Level",
+    examCode: "9231/RN/25",
+    type: "Revision Notes",
+    price: 13.0,
+    rating: 4.8,
+    reviewCount: 156,
+    downloads: 1870,
+    pages: 142,
+    cover: "from-sage to-ink",
+    bestseller: false,
+    tags: ["mathematics", "further maths", "revision"],
+    author: "Dr. Sarah Chen",
+    updatedAt: "2025-03-28",
+  },
+  {
+    id: "11",
+    slug: "igcse-chemistry-practice-questions",
+    title: "IGCSE Chemistry — Practice Question Bank",
+    description: "500+ practice questions organised by topic with detailed solutions. Covers the full IGCSE Chemistry syllabus.",
+    subject: "Science",
+    level: "IGCSE",
+    examCode: "0620/PQ/25",
+    type: "Worksheet",
+    price: 8.5,
+    rating: 4.6,
+    reviewCount: 312,
+    downloads: 4560,
+    pages: 120,
+    cover: "from-teal to-ink",
+    bestseller: false,
+    tags: ["chemistry", "practice", "questions"],
+    author: "Dr. Priya Nair",
+    updatedAt: "2025-05-08",
+  },
+  {
+    id: "12",
+    slug: "o-level-english-literature-notes",
+    title: "O Level English Literature — Study Guide",
+    description: "Complete study guide for O Level English Literature including plot summaries, character analysis, and essay techniques.",
+    subject: "English",
+    level: "O Level",
+    examCode: "2010/SG/24",
+    type: "Revision Notes",
+    price: 9.0,
+    rating: 4.7,
+    reviewCount: 224,
+    downloads: 3120,
+    pages: 108,
+    cover: "from-ink to-brass",
+    bestseller: false,
+    tags: ["english", "literature", "study guide"],
+    author: "Prof. Amara Osei",
+    updatedAt: "2024-12-15",
+  },
+  {
+    id: "13",
+    slug: "igcse-mathematics-paper-2-worked",
+    title: "IGCSE Mathematics Paper 2 — Core Worked Solutions",
+    description: "Step-by-step worked solutions for IGCSE Mathematics Paper 2 (Core). Ideal for students targeting grades 5–7.",
+    subject: "Mathematics",
+    level: "IGCSE",
+    examCode: "0580/41/F/M/25",
+    type: "Past Paper",
+    price: 5.5,
+    rating: 4.6,
+    reviewCount: 189,
+    downloads: 2780,
+    pages: 36,
+    cover: "from-sage to-teal",
+    bestseller: false,
+    tags: ["mathematics", "core", "paper 2"],
+    author: "Dr. Sarah Chen",
+    updatedAt: "2025-06-05",
+  },
+  {
+    id: "14",
+    slug: "a-level-biology-mock-tests",
+    title: "A Level Biology — Mock Test Collection",
+    description: "Eight mock tests covering all A Level Biology topics. Each paper mirrors the Cambridge format with mark schemes.",
+    subject: "Science",
+    level: "A Level",
+    examCode: "9700/MOCK/25",
+    type: "Mock Test",
+    price: 14.5,
+    originalPrice: 18.0,
+    rating: 4.8,
+    reviewCount: 178,
+    downloads: 2340,
+    pages: 92,
+    cover: "from-teal to-teal-dark",
+    bestseller: false,
+    tags: ["biology", "mock test", "A level"],
+    author: "Lisa Park",
+    updatedAt: "2025-04-22",
+  },
+  {
+    id: "15",
+    slug: "igcse-english-second-language-pack",
+    title: "IGCSE English as a Second Language — Complete Pack",
+    description: "Past papers, listening exercises, and speaking prompts for Cambridge IGCSE English as a Second Language.",
+    subject: "English",
+    level: "IGCSE",
+    examCode: "0510/CP/25",
+    type: "Past Paper",
+    price: 10.0,
+    rating: 4.5,
+    reviewCount: 287,
+    downloads: 3450,
+    pages: 156,
+    cover: "from-brass to-teal-dark",
+    bestseller: false,
+    tags: ["english", "second language", "complete"],
+    author: "Prof. Amara Osei",
+    updatedAt: "2025-05-30",
+  },
+];
+
+export const testimonials: Testimonial[] = [
+  {
+    name: "Amara Osei",
+    role: "IGCSE student, Accra",
+    quote: "The worked solutions actually explain the method, not just the answer. My paper 4 grade moved from a C to an A in one term.",
+  },
+  {
+    name: "Daniel Cho",
+    role: "Parent, Singapore",
+    quote: "Everything is mapped to the exact syllabus code, so I never wonder if a resource is for the right exam session.",
+  },
+  {
+    name: "Priya Nair",
+    role: "A Level tutor, Dubai",
+    quote: "I now set every mock test from here. The mark schemes are examiner-quality, not a rough guess.",
+  },
+];
+
+export const faqs: FAQ[] = [
+  {
+    question: "What exam boards do you cover?",
+    answer: "We focus exclusively on Cambridge Assessment International Education (CAIE) — covering IGCSE, O Level, and A Level qualifications across Mathematics, Science, and English.",
+  },
+  {
+    question: "How are the resources tagged to exam codes?",
+    answer: "Every resource is mapped to a specific syllabus code, paper number, and exam session. This means you can find exactly the material you need for your specific exam.",
+  },
+  {
+    question: "Are the mark schemes written by examiners?",
+    answer: "Yes. Our team includes qualified Cambridge examiners and experienced tutors who produce mark schemes to examiner standards.",
+  },
+  {
+    question: "How do I download my purchases?",
+    answer: "After purchase, resources are instantly available in your dashboard. You can download them as PDF files at any time from the Downloads page.",
+  },
+  {
+    question: "Can I request a refund?",
+    answer: "We offer a 7-day money-back guarantee on all purchases. If a resource doesn't meet your expectations, contact us for a full refund.",
+  },
+  {
+    question: "Do you offer bulk pricing for schools?",
+    answer: "Yes. We offer institutional licenses for schools and tutoring centres. Contact us for custom pricing based on your needs.",
+  },
+];
+
+export const sampleOrders: Order[] = [
+  {
+    id: "ORD-001",
+    date: "2025-06-10",
+    total: 14.5,
+    status: "completed",
+    items: [
+      { title: "IGCSE Mathematics Paper 4 — Worked Solutions Pack", price: 6.5 },
+      { title: "IGCSE Physics — Complete Revision Notes", price: 8.0 },
+    ],
+  },
+  {
+    id: "ORD-002",
+    date: "2025-05-22",
+    total: 11.0,
+    status: "completed",
+    items: [{ title: "O Level English 1123 — Ten-Year Past Paper Pack", price: 11.0 }],
+  },
+  {
+    id: "ORD-003",
+    date: "2025-04-15",
+    total: 9.5,
+    status: "refunded",
+    items: [{ title: "IGCSE Mathematics — Topic Worksheets (200+ pages)", price: 9.5 }],
+  },
+];
+
+export const allLevels = ["IGCSE", "O Level", "A Level"];
+export const allTypes: ProductType[] = ["Past Paper", "Mock Test", "Worksheet", "Revision Notes"];
+export const allSubjects = ["Mathematics", "Science", "English"];

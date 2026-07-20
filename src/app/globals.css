@@ -1,26 +1,177 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-ink: #12181B;
+  --color-parchment: #F6F3EC;
+  --color-slate: #5B6663;
+  --color-teal: #8FB3A3;
+  --color-teal-dark: #1F4B43;
+  --color-brass: #B08D57;
+  --color-sage: #8FB3A3;
+  --color-warm-gray: #EFEAE0;
+
+  --color-background: #F6F3EC;
+  --color-foreground: #12181B;
+
+  --radius-card: 16px;
+  --radius-button: 8px;
+
+  --shadow-soft: 0 8px 24px rgba(18, 24, 27, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background-color: #8FB3A3;
+  color: #12181B;
+}
+
+.tick-mark::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background-color: #B08D57;
+  margin-right: 8px;
+  transform: translateY(-1px);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(18,24,27,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18,24,27,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.mask-fade-b {
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+.animate-float {
+  animation: float-slow 5s ease-in-out infinite;
+}
+
+/* ── Cards ── */
+.card-hover {
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -8px rgba(18, 24, 27, 0.12);
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(31, 75, 67, 0.2);
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+.btn-outline {
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease;
+}
+.btn-outline:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(18, 24, 27, 0.06);
+}
+.btn-outline:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+/* ── Nav links ── */
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1.5px;
+  background-color: var(--color-teal-dark);
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ── Form inputs ── */
+.input-field {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.input-field:focus {
+  border-color: var(--color-teal-dark);
+  box-shadow: 0 0 0 3px rgba(31, 75, 67, 0.08);
+  outline: none;
+}
+
+/* ── Navbar scroll state ── */
+.nav-scrolled {
+  box-shadow: 0 1px 8px rgba(18, 24, 27, 0.06);
+}
+
+/* ── Hero form fade-in ── */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
