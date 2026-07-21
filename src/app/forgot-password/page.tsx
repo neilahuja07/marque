@@ -5,8 +5,10 @@ import Link from "next/link";
 import { AuthBranding } from "@/components/marketplace/auth-branding";
 import { AuthCard } from "@/components/marketplace/auth-card";
 import { AuthFormInput } from "@/components/marketplace/auth-form-input";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ForgotPasswordPage() {
+  const supabase = createClient();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -19,7 +21,7 @@ export default function ForgotPasswordPage() {
     return "";
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
     const err = validate();
@@ -27,10 +29,19 @@ export default function ForgotPasswordPage() {
     if (err) return;
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setSent(true);
-    }, 1500);
+
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    setIsLoading(false);
+
+    if (resetError) {
+      setError(resetError.message);
+      return;
+    }
+
+    setSent(true);
   };
 
   return (
@@ -111,7 +122,7 @@ export default function ForgotPasswordPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Sending\u2026
+                    Sending…
                   </>
                 ) : (
                   "Send reset link"

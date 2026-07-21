@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+"use client";
+
+import { use } from "react";
 import Link from "next/link";
 import { Navbar, Footer, ResourceCard } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
-import { products } from "@/lib/dummy-data";
+import { useProducts } from "@/lib/product-store";
 import { Breadcrumbs } from "@/components/marketplace/breadcrumbs";
 import { ProductGallery } from "@/components/marketplace/product-gallery";
 import { WhatsIncluded } from "@/components/marketplace/whats-included";
@@ -15,33 +16,31 @@ import { ProductFAQ } from "@/components/marketplace/product-faq";
 import { RatingStars } from "@/components/marketplace/rating-stars";
 import { ExamCodeBadge } from "@/components/marketplace/exam-code-badge";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
-  if (!product) return { title: "Product Not Found — Marque" };
-  return {
-    title: `${product.title} — Marque`,
-    description: product.description,
-    openGraph: {
-      title: product.title,
-      description: product.description,
-      type: "website",
-    },
-  };
-}
+export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
+  const { getProductBySlug, products } = useProducts();
+  const product = getProductBySlug(slug);
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
-
-export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
-
-  if (!product) notFound();
+  if (!product) {
+    return (
+      <>
+        <Navbar />
+        <main id="main-content" className="flex-1 flex items-center justify-center py-20">
+          <div className="text-center">
+            <h1 className="font-display text-[28px] text-ink">Product Not Found</h1>
+            <p className="mt-2 text-[14px] text-slate">The resource you are looking for does not exist.</p>
+            <Link href="/browse" className="mt-4 inline-block btn-primary rounded-[8px] bg-teal-dark px-6 py-3 text-[14px] font-medium text-white">
+              Browse Resources
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   const related = products
-    .filter((p) => p.id !== product.id && (p.subject === product.subject || p.level === product.level))
+    .filter((p) => p.published && p.id !== product.id && (p.subject === product.subject || p.level === product.level))
     .slice(0, 4);
 
   const resourceInfo = [

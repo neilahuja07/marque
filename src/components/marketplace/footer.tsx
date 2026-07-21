@@ -30,7 +30,6 @@ const footerSections = [
     links: [
       { label: "Log in", href: "/login" },
       { label: "Sign up", href: "/register" },
-      { label: "Dashboard", href: "/dashboard" },
     ],
   },
 ];

@@ -39,7 +39,6 @@ const statIcons = {
 
 const roleVariant: Record<string, "info" | "success" | "warning"> = {
   student: "info",
-  seller: "success",
   admin: "warning",
 };
 

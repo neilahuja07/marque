@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
 import {
   Navbar,
@@ -9,22 +10,18 @@ import {
   CTA,
   Footer,
 } from "@/components/marketplace";
-import { products, categories } from "@/lib/dummy-data";
+import { useProducts } from "@/lib/product-store";
+import { categories } from "@/lib/dummy-data";
 import { FadeIn } from "@/components/ui/fade-in";
 
-export const metadata: Metadata = {
-  title: "Marque — Premium Cambridge IGCSE, O Level & A Level Resources",
-  description: "Past papers, mock tests, worksheets and revision notes for Cambridge Mathematics, Science and English. Trusted by thousands of students.",
-  openGraph: {
-    title: "Marque — Premium Cambridge IGCSE, O Level & A Level Resources",
-    description: "Past papers, mock tests, worksheets and revision notes for Cambridge Mathematics, Science and English.",
-    type: "website",
-    siteName: "Marque",
-  },
-};
-
 export default function HomePage() {
-  const bestsellers = products.filter((p) => p.bestseller);
+  const { products } = useProducts();
+  const bestsellers = products.filter((p) => p.bestseller && p.published);
+
+  const dynamicCategories = categories.map((c) => ({
+    ...c,
+    count: products.filter((p) => p.subject === c.name && p.published).length,
+  }));
 
   return (
     <>
@@ -43,7 +40,7 @@ export default function HomePage() {
               </h2>
             </div>
             <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {categories.map((c) => (
+              {dynamicCategories.map((c) => (
                 <CategoryCard key={c.slug} {...c} />
               ))}
             </div>

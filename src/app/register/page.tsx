@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AuthBranding } from "@/components/marketplace/auth-branding";
 import { AuthCard } from "@/components/marketplace/auth-card";
 import { AuthFormInput, PasswordInput } from "@/components/marketplace/auth-form-input";
 import { SocialLoginDivider } from "@/components/marketplace/social-login-divider";
+import { createClient } from "@/lib/supabase/client";
 
 const countries = [
   "India",
@@ -43,12 +45,14 @@ const initialForm: FormValues = {
 };
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const supabase = createClient();
   const [form, setForm] = useState<FormValues>(initialForm);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<Record<FormFields, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<FormFields | "general", string>>>({});
   const [touched, setTouched] = useState<Record<FormFields, boolean>>({
     firstName: false,
     lastName: false,
@@ -92,7 +96,7 @@ export default function RegisterPage() {
     setErrors(e);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const allTouched: Record<FormFields, boolean> = {
       firstName: true,
@@ -108,10 +112,34 @@ export default function RegisterPage() {
     if (Object.keys(validationErrors).length > 0 || !agreeTerms) return;
 
     setIsLoading(true);
-    setTimeout(() => {
+    setErrors({});
+
+    const { error } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+      options: {
+        data: {
+          first_name: form.firstName,
+          last_name: form.lastName,
+          country: form.country,
+          role: "student",
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
       setIsLoading(false);
-      window.location.href = "/dashboard";
-    }, 1500);
+      if (error.message.includes("already registered")) {
+        setErrors({ general: "An account with this email already exists." });
+      } else {
+        setErrors({ general: error.message });
+      }
+      return;
+    }
+
+    sessionStorage.setItem("marque_signup_email", form.email);
+    router.push("/verify-email");
   };
 
   return (
@@ -124,6 +152,12 @@ export default function RegisterPage() {
       {/* Right: Auth form */}
       <div className="flex w-full flex-1 items-center justify-center px-6 py-10 lg:w-[55%]">
         <AuthCard title="Create your account" subtitle="Start exploring premium study resources.">
+          {errors.general && (
+            <div className="mb-4 rounded-[8px] border border-red-200 bg-red-50 p-3 text-[13px] text-red-600">
+              {errors.general}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <AuthFormInput

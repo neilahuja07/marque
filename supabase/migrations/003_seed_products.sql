@@ -1,0 +1,191 @@
+-- Seed initial products from the original dummy data
+-- This ensures the app has content to display after migration
+
+INSERT INTO products (slug, title, description, subject, level, exam_code, type, price, original_price, rating, review_count, pages, downloads, cover, bestseller, published, featured, tags, author, updated_at, exam_board, session, language, format, version, long_description, whats_included, syllabus_coverage, rating_distribution, reviews, product_faqs)
+VALUES
+(
+  'igcse-mathematics-paper-4-worked-solutions',
+  'IGCSE Mathematics Paper 4 — Worked Solutions Pack',
+  'Complete worked solutions for IGCSE Mathematics Paper 4 (Extended). Each question is solved step-by-step with examiner-style marking annotations, showing multiple approaches where applicable.',
+  'Mathematics', 'IGCSE', '0580/42/M/J/25', 'Past Paper',
+  6.50, 9.00, 4.9, 312, 48, 8420,
+  'from-teal-dark to-ink', true, true, true,
+  '["algebra", "paper 4", "extended"]',
+  'Dr. Sarah Chen', '2025-05-15',
+  'Cambridge Assessment International Education', 'May/June 2025', 'English', 'PDF', '1.2',
+  'This worked solutions pack provides complete, examiner-quality solutions for every question on the IGCSE Mathematics Paper 4 (Extended) from the May/June 2025 session. Each solution is presented step-by-step with clear working, marking annotations, and alternative approaches where applicable.\n\nDesigned for students preparing for their IGCSE examinations, this resource helps you understand not just the answer, but the reasoning behind each step. Common mistakes are flagged, and examiner tips highlight where marks are typically gained or lost.\n\nWhether you are self-studying or using this alongside classroom learning, these worked solutions will deepen your understanding and improve your exam technique.',
+  '["PDF Download", "Worked Solutions", "Mark Scheme", "Instant Access", "Lifetime Access", "Free Updates"]',
+  '["Algebra", "Trigonometry", "Geometry", "Statistics", "Probability", "Mensuration", "Vectors", "Functions", "Number", "Coordinate Geometry"]',
+  '[{"stars": 5, "count": 268}, {"stars": 4, "count": 34}, {"stars": 3, "count": 7}, {"stars": 2, "count": 2}, {"stars": 1, "count": 1}]',
+  '[{"name": "Amara Osei", "role": "IGCSE Student, Accra", "rating": 5, "date": "2025-06-01", "text": "The worked solutions actually explain the method, not just the answer. My paper 4 grade moved from a C to an A in one term."}, {"name": "James Mitchell", "role": "Parent, London", "rating": 5, "date": "2025-05-28", "text": "Bought this for my daughter and her confidence has grown massively."}, {"name": "Fatima Al-Hassan", "role": "Maths Tutor, Dubai", "rating": 5, "date": "2025-05-22", "text": "I use these worked solutions with all my students."}, {"name": "Daniel Cho", "role": "Student, Singapore", "rating": 4, "date": "2025-05-18", "text": "Very thorough solutions."}, {"name": "Priya Sharma", "role": "IGCSE Student, Mumbai", "rating": 5, "date": "2025-05-12", "text": "The best investment I made for my exams."}, {"name": "Lucas Fernandes", "role": "Parent, São Paulo", "rating": 5, "date": "2025-05-08", "text": "Clear, well-organized, and accurate."}]',
+  '[{"question": "How do I download the resource?", "answer": "After completing your purchase, the PDF will be available instantly in your dashboard."}, {"question": "Can I print the worked solutions?", "answer": "Yes. The PDF is formatted for both screen reading and printing."}, {"question": "Does this include the original question paper?", "answer": "This pack contains worked solutions and mark schemes."}, {"question": "Will I receive updates if corrections are made?", "answer": "Yes. You will receive free updates whenever we make improvements."}, {"question": "Is this suitable for self-study?", "answer": "Absolutely. The step-by-step format is designed to be understood without a teacher."}]'
+),
+(
+  'igcse-physics-complete-revision-notes',
+  'IGCSE Physics — Complete Revision Notes',
+  'Comprehensive revision notes covering the entire IGCSE Physics syllabus. Includes diagrams, formula sheets, and worked examples for every topic.',
+  'Science', 'IGCSE', '0625/RN/24', 'Revision Notes',
+  8.00, NULL, 4.8, 501, 96, 6250,
+  'from-teal to-teal-dark', true, true, true,
+  '["physics", "revision", "complete"]',
+  'James Wright', '2024-11-20',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'o-level-english-ten-year-pack',
+  'O Level English 1123 — Ten-Year Past Paper Pack',
+  'A complete collection of O Level English 1123 past papers from the last ten years, with full mark schemes and examiner reports.',
+  'English', 'O Level', '1123/DECADE', 'Past Paper',
+  11.00, 15.00, 4.9, 674, 210, 5840,
+  'from-ink to-teal-dark', true, true, true,
+  '["english", "past papers", "decade"]',
+  'Prof. Amara Osei', '2025-02-10',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'a-level-chemistry-mock-tests',
+  'A Level Chemistry — Mock Test Bundle',
+  'Twelve mock tests designed to mirror the format and difficulty of Cambridge A Level Chemistry papers. Includes detailed mark schemes.',
+  'Science', 'A Level', '9701/MOCK', 'Mock Test',
+  12.50, 16.00, 4.7, 189, 72, 3210,
+  'from-teal-dark to-teal', false, true, false,
+  '["chemistry", "mock test", "A level"]',
+  'Dr. Priya Nair', '2025-04-01',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'igcse-mathematics-worksheets',
+  'IGCSE Mathematics — Topic Worksheets (200+ pages)',
+  'Over 200 pages of topic-specific worksheets covering every area of the IGCSE Mathematics syllabus. Perfect for targeted practice.',
+  'Mathematics', 'IGCSE', '0580/WS', 'Worksheet',
+  9.50, NULL, 4.6, 245, 214, 4100,
+  'from-sage to-teal-dark', false, true, false,
+  '["mathematics", "worksheets", "practice"]',
+  'Dr. Sarah Chen', '2025-03-18',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'igcse-biology-revision-flashcards',
+  'IGCSE Biology — Revision Flashcards',
+  'Digital flashcards covering key definitions, processes, and diagrams from the IGCSE Biology syllabus. Active recall made easy.',
+  'Science', 'IGCSE', '0610/FC/24', 'Revision Notes',
+  5.00, NULL, 4.8, 378, 64, 7200,
+  'from-teal to-sage', true, true, true,
+  '["biology", "flashcards", "revision"]',
+  'Lisa Park', '2025-01-25',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'o-level-mathematics-past-papers-2018-2024',
+  'O Level Mathematics 4024 — Past Papers 2018–2024',
+  'Seven years of O Level Mathematics past papers with full worked solutions and examiner commentary.',
+  'Mathematics', 'O Level', '4024/PAST', 'Past Paper',
+  14.00, 18.00, 4.7, 432, 186, 3980,
+  'from-ink to-sage', false, true, false,
+  '["mathematics", "past papers", "O level"]',
+  'Dr. Sarah Chen', '2025-06-02',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'a-level-physics-mock-exams',
+  'A Level Physics — Full Mock Exam Series',
+  'Six complete mock exams modelled on recent Cambridge A Level Physics papers. Detailed mark schemes with common error annotations.',
+  'Science', 'A Level', '9702/MOCK/25', 'Mock Test',
+  15.00, NULL, 4.9, 267, 84, 2890,
+  'from-teal-dark to-ink', false, true, false,
+  '["physics", "mock test", "A level"]',
+  'James Wright', '2025-05-20',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'igcse-english-language-worksheets',
+  'IGCSE English Language — Writing Worksheets',
+  'Targeted worksheets for IGCSE English Language papers covering comprehension, directed writing, and composition skills.',
+  'English', 'IGCSE', '0500/WS/25', 'Worksheet',
+  7.50, NULL, 4.5, 198, 78, 2340,
+  'from-brass to-ink', false, true, false,
+  '["english", "writing", "worksheets"]',
+  'Prof. Amara Osei', '2025-04-10',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'a-level-mathematics-further-notes',
+  'A Level Further Mathematics — Revision Notes',
+  'Comprehensive revision notes for Cambridge A Level Further Mathematics. Covers further pure, mechanics, and statistics modules.',
+  'Mathematics', 'A Level', '9231/RN/25', 'Revision Notes',
+  13.00, NULL, 4.8, 156, 142, 1870,
+  'from-sage to-ink', false, true, false,
+  '["mathematics", "further maths", "revision"]',
+  'Dr. Sarah Chen', '2025-03-28',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'igcse-chemistry-practice-questions',
+  'IGCSE Chemistry — Practice Question Bank',
+  '500+ practice questions organised by topic with detailed solutions. Covers the full IGCSE Chemistry syllabus.',
+  'Science', 'IGCSE', '0620/PQ/25', 'Worksheet',
+  8.50, NULL, 4.6, 312, 120, 4560,
+  'from-teal to-ink', false, true, false,
+  '["chemistry", "practice", "questions"]',
+  'Dr. Priya Nair', '2025-05-08',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'o-level-english-literature-notes',
+  'O Level English Literature — Study Guide',
+  'Complete study guide for O Level English Literature including plot summaries, character analysis, and essay techniques.',
+  'English', 'O Level', '2010/SG/24', 'Revision Notes',
+  9.00, NULL, 4.7, 224, 108, 3120,
+  'from-ink to-brass', false, true, false,
+  '["english", "literature", "study guide"]',
+  'Prof. Amara Osei', '2024-12-15',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'igcse-mathematics-paper-2-worked',
+  'IGCSE Mathematics Paper 2 — Core Worked Solutions',
+  'Step-by-step worked solutions for IGCSE Mathematics Paper 2 (Core). Ideal for students targeting grades 5–7.',
+  'Mathematics', 'IGCSE', '0580/41/F/M/25', 'Past Paper',
+  5.50, NULL, 4.6, 189, 36, 2780,
+  'from-sage to-teal', false, true, false,
+  '["mathematics", "core", "paper 2"]',
+  'Dr. Sarah Chen', '2025-06-05',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'a-level-biology-mock-tests',
+  'A Level Biology — Mock Test Collection',
+  'Eight mock tests covering all A Level Biology topics. Each paper mirrors the Cambridge format with mark schemes.',
+  'Science', 'A Level', '9700/MOCK/25', 'Mock Test',
+  14.50, 18.00, 4.8, 178, 92, 2340,
+  'from-teal to-teal-dark', false, true, false,
+  '["biology", "mock test", "A level"]',
+  'Lisa Park', '2025-04-22',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+),
+(
+  'igcse-english-second-language-pack',
+  'IGCSE English as a Second Language — Complete Pack',
+  'Past papers, listening exercises, and speaking prompts for Cambridge IGCSE English as a Second Language.',
+  'English', 'IGCSE', '0510/CP/25', 'Past Paper',
+  10.00, NULL, 4.5, 287, 156, 3450,
+  'from-brass to-teal-dark', false, true, false,
+  '["english", "second language", "complete"]',
+  'Prof. Amara Osei', '2025-05-30',
+  NULL, NULL, 'English', 'PDF', NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL
+)
+ON CONFLICT (slug) DO NOTHING;

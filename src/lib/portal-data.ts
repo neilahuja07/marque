@@ -59,12 +59,12 @@ export const sellerSalesBySubject = [
 export const adminUsers = [
   { id: "USR-001", name: "Neil Sharma", email: "neil@example.com", role: "student", joined: "2025-01-15", orders: 5, status: "active" },
   { id: "USR-002", name: "Jane Smith", email: "jane@example.com", role: "student", joined: "2025-02-10", orders: 3, status: "active" },
-  { id: "USR-003", name: "Dr. Sarah Chen", email: "sarah@marque.com", role: "seller", joined: "2024-06-01", orders: 0, status: "active" },
+  { id: "USR-003", name: "Dr. Sarah Chen", email: "sarah@marque.com", role: "student", joined: "2024-06-01", orders: 0, status: "active" },
   { id: "USR-004", name: "John Doe", email: "john@example.com", role: "student", joined: "2025-03-20", orders: 1, status: "active" },
   { id: "USR-005", name: "Priya Patel", email: "priya@example.com", role: "student", joined: "2025-04-05", orders: 5, status: "active" },
   { id: "USR-006", name: "Ahmed Hassan", email: "ahmed@example.com", role: "student", joined: "2025-04-12", orders: 2, status: "suspended" },
-  { id: "USR-007", name: "James Wright", email: "james@marque.com", role: "seller", joined: "2024-08-15", orders: 0, status: "active" },
-  { id: "USR-008", name: "Lisa Park", email: "lisa@marque.com", role: "seller", joined: "2024-09-20", orders: 0, status: "active" },
+  { id: "USR-007", name: "James Wright", email: "james@marque.com", role: "student", joined: "2024-08-15", orders: 0, status: "active" },
+  { id: "USR-008", name: "Lisa Park", email: "lisa@marque.com", role: "student", joined: "2024-09-20", orders: 0, status: "active" },
   { id: "USR-009", name: "Admin User", email: "admin@marque.com", role: "admin", joined: "2024-01-01", orders: 0, status: "active" },
   { id: "USR-010", name: "Lucas Fernandes", email: "lucas@example.com", role: "student", joined: "2025-05-01", orders: 2, status: "active" },
 ];

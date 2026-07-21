@@ -16,14 +16,12 @@ import { adminUsers } from "@/lib/portal-data";
 const filters = [
   { label: "All", value: "all" },
   { label: "Students", value: "student" },
-  { label: "Sellers", value: "seller" },
   { label: "Admins", value: "admin" },
   { label: "Suspended", value: "suspended" },
 ];
 
 const roleVariant: Record<string, "info" | "success" | "warning"> = {
   student: "info",
-  seller: "success",
   admin: "warning",
 };
 
@@ -67,7 +65,7 @@ export default function AdminUsersPage() {
 
         {/* Desktop Table */}
         <FadeIn delay={40}>
-          <div className="hidden overflow-hidden rounded-[12px] border border-ink/10 bg-white md:block">
+          <div className="hidden rounded-[12px] border border-ink/10 bg-white md:block">
             <table className="w-full text-left text-[13px]">
               <thead>
                 <tr className="border-b border-ink/10 bg-parchment/50">

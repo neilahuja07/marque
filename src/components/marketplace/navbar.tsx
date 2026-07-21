@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/components/auth-provider";
 
 const navLinks = [
   { label: "Browse", href: "/browse" },
@@ -11,6 +12,7 @@ const navLinks = [
 ];
 
 export function Navbar() {
+  const { user, role, loading, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -20,6 +22,8 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const dashboardHref = role === "admin" ? "/admin" : "/dashboard";
 
   return (
     <header
@@ -45,9 +49,15 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Link
+            href={loading ? "/login" : dashboardHref}
+            className="nav-link"
+          >
+            Dashboard
+          </Link>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Link
             href="/cart"
             className="relative rounded-[8px] border border-ink/15 p-2.5 transition-all duration-200 hover:border-ink/30 hover:shadow-sm"
@@ -71,6 +81,36 @@ export function Navbar() {
               2
             </span>
           </Link>
+
+          {!loading && (
+            <>
+              {user ? (
+                <div className="hidden items-center gap-3 md:flex">
+                  <button
+                    onClick={signOut}
+                    className="rounded-[8px] border border-ink/15 px-4 py-2 text-[13px] font-medium text-ink transition-all hover:border-ink/30 hover:shadow-sm"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <div className="hidden items-center gap-3 md:flex">
+                  <Link
+                    href="/login"
+                    className="rounded-[8px] border border-ink/15 px-4 py-2 text-[13px] font-medium text-ink transition-all hover:border-ink/30 hover:shadow-sm"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="btn-primary rounded-[8px] bg-teal-dark px-4 py-2 text-[13px] font-medium text-white transition-all"
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
 
           <button
             className="flex items-center justify-center rounded-[8px] border border-ink/15 p-2.5 transition-all duration-200 hover:border-ink/30 md:hidden"
@@ -107,6 +147,47 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            <Link
+              href={loading ? "/login" : dashboardHref}
+              className="nav-link py-2.5"
+              onClick={() => setMobileOpen(false)}
+            >
+              Dashboard
+            </Link>
+
+            {!loading && (
+              <>
+                {user ? (
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      signOut();
+                    }}
+                    className="nav-link py-2.5 text-left font-medium text-red-600"
+                  >
+                    Sign Out
+                  </button>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="nav-link py-2.5"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="nav-link py-2.5 font-medium text-teal-dark"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
+              </>
+            )}
           </nav>
         </div>
       )}

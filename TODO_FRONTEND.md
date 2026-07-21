@@ -56,7 +56,7 @@
 
 ### Reusable Components — Marketplace
 - [x] `Navbar` — Sticky, scroll shadow, mobile menu, cart badge
-- [x] `Footer` — Link sections, newsletter, copyright
+- [x] `Footer` — Link sections, copyright
 - [x] `Hero` — Hero section with auth form
 - [x] `HeroAuthForm` — Sign in/up toggle, forgot password flow
 - [x] `ResourceCard` — Product card with gradient cover, rating, price
@@ -156,8 +156,6 @@
 - [ ] `DataTable` — Generic sortable/filterable table (currently duplicated per page)
 
 ### Features
-- [ ] Dark mode (appearance toggle exists, doesn't apply theme)
-- [ ] Newsletter subscription (footer form is non-functional)
 - [ ] Image uploads (avatar change button is placeholder)
 - [ ] Client-side search filtering wired to URL params
 - [ ] Sort controls on browse page (by price, rating, newest)
@@ -229,16 +227,16 @@
 ## Backend (Do NOT implement yet)
 
 ### Authentication
-- [ ] Supabase Auth integration
-- [ ] Email/password sign up
-- [ ] Email/password sign in
+- [x] Supabase Auth integration
+- [x] Email/password sign up
+- [x] Email/password sign in
 - [ ] Google OAuth
-- [ ] Forgot password flow (email link)
-- [ ] Reset password flow
-- [ ] Email verification
-- [ ] Session management
-- [ ] Protected routes middleware
-- [ ] User roles (student, seller, admin)
+- [x] Forgot password flow (email link)
+- [x] Reset password flow
+- [x] Email verification
+- [x] Session management
+- [x] Protected routes middleware
+- [x] User roles (student, seller, admin)
 
 ### Database (Supabase)
 - [ ] Users table
@@ -281,7 +279,6 @@
 - [ ] `GET /api/products` — Product listing with filters
 - [ ] `GET /api/products/[slug]` — Single product
 - [ ] `PUT /api/profile` — Update profile
-- [ ] `POST /api/newsletter` — Subscribe to newsletter
 
 ### Analytics
 - [ ] Page view tracking

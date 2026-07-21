@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type FAQ } from "@/lib/dummy-data";
+import type { FAQ } from "@/lib/types";
 
 export function ProductFAQ({ faqs }: { faqs: FAQ[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);

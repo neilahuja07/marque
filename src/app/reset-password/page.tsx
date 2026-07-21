@@ -1,20 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthBranding } from "@/components/marketplace/auth-branding";
 import { AuthCard } from "@/components/marketplace/auth-card";
 import { PasswordInput } from "@/components/marketplace/auth-form-input";
+import { createClient } from "@/lib/supabase/client";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const supabase = createClient();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [reset, setReset] = useState(false);
-  const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string }>({});
+  const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string; general?: string }>({});
   const [touched, setTouched] = useState({ password: false, confirmPassword: false });
+  const [hasAccess, setHasAccess] = useState(true);
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).catch(() => {
+        setHasAccess(false);
+      });
+    }
+  }, [searchParams, supabase]);
 
   const validate = () => {
     const e: typeof errors = {};
@@ -38,7 +53,7 @@ export default function ResetPasswordPage() {
     setErrors(validate());
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ password: true, confirmPassword: true });
     const validationErrors = validate();
@@ -46,11 +61,38 @@ export default function ResetPasswordPage() {
     if (Object.keys(validationErrors).length > 0) return;
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setReset(true);
-    }, 1500);
+
+    const { error } = await supabase.auth.updateUser({ password });
+
+    setIsLoading(false);
+
+    if (error) {
+      setErrors({ general: error.message });
+      return;
+    }
+
+    setReset(true);
   };
+
+  if (!hasAccess) {
+    return (
+      <div className="flex min-h-screen">
+        <div className="hidden lg:block lg:w-[45%]">
+          <AuthBranding />
+        </div>
+        <div className="flex w-full flex-1 items-center justify-center px-6 py-10 lg:w-[55%]">
+          <AuthCard title="Invalid or expired link" subtitle="Please request a new password reset link.">
+            <Link
+              href="/forgot-password"
+              className="btn-primary flex w-full items-center justify-center rounded-[8px] bg-teal-dark px-6 py-3 text-[14px] font-medium text-white"
+            >
+              Request new link
+            </Link>
+          </AuthCard>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -69,6 +111,12 @@ export default function ResetPasswordPage() {
               : "Create a strong password to secure your account."
           }
         >
+          {errors.general && (
+            <div className="mb-4 rounded-[8px] border border-red-200 bg-red-50 p-3 text-[13px] text-red-600">
+              {errors.general}
+            </div>
+          )}
+
           {reset ? (
             <div className="space-y-6">
               <div className="flex items-center justify-center">
@@ -128,7 +176,7 @@ export default function ResetPasswordPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Updating\u2026
+                    Updating…
                   </>
                 ) : (
                   "Update password"
@@ -145,5 +193,22 @@ export default function ResetPasswordPage() {
         </AuthCard>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <svg className="h-6 w-6 animate-spin text-teal-dark" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+        </div>
+      }
+    >
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

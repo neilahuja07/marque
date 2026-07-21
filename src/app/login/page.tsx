@@ -2,18 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AuthBranding } from "@/components/marketplace/auth-branding";
 import { AuthCard } from "@/components/marketplace/auth-card";
 import { AuthFormInput, PasswordInput } from "@/components/marketplace/auth-form-input";
 import { SocialLoginDivider } from "@/components/marketplace/social-login-divider";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const [touched, setTouched] = useState<{ email: boolean; password: boolean }>({
     email: false,
     password: false,
@@ -40,7 +44,7 @@ export default function LoginPage() {
     setErrors(newErrors);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ email: true, password: true });
     const newErrors = validate();
@@ -48,11 +52,27 @@ export default function LoginPage() {
     if (Object.keys(newErrors).length > 0) return;
 
     setIsLoading(true);
-    // Dummy: simulate loading
-    setTimeout(() => {
+    setErrors({});
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
       setIsLoading(false);
-      window.location.href = "/dashboard";
-    }, 1500);
+      if (error.message.includes("Email not confirmed")) {
+        setErrors({ general: "Please verify your email before signing in." });
+      } else if (error.message.includes("Invalid login")) {
+        setErrors({ general: "Invalid email or password." });
+      } else {
+        setErrors({ general: error.message });
+      }
+      return;
+    }
+
+    router.push("/dashboard");
+    router.refresh();
   };
 
   return (
@@ -65,6 +85,12 @@ export default function LoginPage() {
       {/* Right: Auth form */}
       <div className="flex w-full flex-1 items-center justify-center px-6 py-10 lg:w-[55%]">
         <AuthCard title="Welcome back" subtitle="Sign in to access your resources.">
+          {errors.general && (
+            <div className="mb-4 rounded-[8px] border border-red-200 bg-red-50 p-3 text-[13px] text-red-600">
+              {errors.general}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <AuthFormInput
               id="login-email"

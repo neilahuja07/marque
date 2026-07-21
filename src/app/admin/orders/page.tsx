@@ -63,7 +63,7 @@ export default function AdminOrdersPage() {
 
         {/* Desktop Table */}
         <FadeIn delay={40}>
-          <div className="hidden overflow-hidden rounded-[12px] border border-ink/10 bg-white md:block">
+          <div className="hidden rounded-[12px] border border-ink/10 bg-white md:block">
             <table className="w-full text-left text-[13px]">
               <thead>
                 <tr className="border-b border-ink/10 bg-parchment/50">

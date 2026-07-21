@@ -1,6 +1,6 @@
 # Marque — Digital Marketplace for Cambridge Study Resources
 
-Premium marketplace for Cambridge IGCSE, O Level & A Level study resources. Frontend only — no auth, APIs, databases, or payments. All dummy data.
+Premium marketplace for Cambridge IGCSE, O Level & A Level study resources. Two roles: student and admin. Supabase Auth (email/password + Google OAuth).
 
 ## Tech Stack
 
@@ -13,6 +13,7 @@ Premium marketplace for Cambridge IGCSE, O Level & A Level study resources. Fron
 | Animation | Framer Motion | ^12.42 |
 | Icons | Lucide React | ^1.25 |
 | Utilities | clsx, tailwind-merge, class-variance-authority | — |
+| Auth | Supabase (SSR) | ^0.6 |
 
 ## Getting Started
 
@@ -31,6 +32,14 @@ npm start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Supabase Setup
+
+1. Create a Supabase project
+2. Copy `.env.local` variables
+3. Run `supabase/migrations/001_profiles.sql` in Supabase SQL editor
+4. Enable Google OAuth in Supabase Auth settings
+5. Set Site URL to `http://localhost:3000` and redirect URLs to `http://localhost:3000/auth/callback`
 
 ## Project Structure
 
@@ -66,13 +75,6 @@ src/
 │   │   ├── orders/page.tsx
 │   │   ├── wishlist/page.tsx
 │   │   └── profile/page.tsx
-│   ├── seller/                   # Seller portal
-│   │   ├── page.tsx
-│   │   ├── products/page.tsx
-│   │   ├── upload/page.tsx
-│   │   ├── orders/page.tsx
-│   │   ├── analytics/page.tsx
-│   │   └── settings/page.tsx
 │   └── admin/                    # Admin portal
 │       ├── page.tsx
 │       ├── users/page.tsx
@@ -85,15 +87,19 @@ src/
 ├── components/
 │   ├── marketplace/              # 34 marketplace components
 │   ├── dashboard/                # 9 dashboard components
-│   ├── providers.tsx             # ToastProvider wrapper
+│   ├── providers.tsx             # AuthProvider + ToastProvider wrapper
+│   ├── auth-provider.tsx         # Auth context (user, role, session, signOut)
 │   └── ui/                       # 15 shared UI primitives
 └── lib/
     ├── dummy-data.ts             # Core types + 15 products + orders + FAQs
-    ├── portal-data.ts            # Seller + admin dummy data
+    ├── portal-data.ts            # Admin dummy data
     ├── dashboard-sidebar.tsx     # Student sidebar config
-    ├── seller-sidebar.tsx        # Seller sidebar config
     ├── admin-sidebar.tsx         # Admin sidebar config
-    └── utils.ts                  # cn() utility
+    ├── utils.ts                  # cn() utility
+    └── supabase/
+        ├── client.ts             # Browser client (with build-safe fallback)
+        ├── server.ts             # Server client (cookies-based)
+        └── middleware.ts         # Middleware client (session refresh + route protection)
 ```
 
 ## Design System
@@ -129,7 +135,7 @@ src/
 | `.nav-link` | Nav link with animated underline |
 | `.input-field` | Form input with teal focus ring |
 
-## Routes (56 total)
+## Routes (50 total)
 
 ### Core Pages
 | Route | Description |
@@ -164,16 +170,6 @@ src/
 | `/dashboard/profile` | Profile with avatar, form, notifications |
 | `/settings` | Settings: language, region, display, email, sessions |
 
-### Seller Portal
-| Route | Description |
-|-------|-------------|
-| `/seller` | Overview: revenue stats, sales chart, recent sales, reviews |
-| `/seller/products` | Product management: search, filters, table, bulk actions |
-| `/seller/upload` | 5-step upload wizard (info, PDF, pricing, preview, publish) |
-| `/seller/orders` | Orders: table, invoice modal, payment status |
-| `/seller/analytics` | Charts, top products, sales by subject donut chart |
-| `/seller/settings` | Store info, payout, notifications, danger zone |
-
 ### Admin Portal
 | Route | Description |
 |-------|-------------|
@@ -193,6 +189,11 @@ src/
 | `/orders` | Legacy standalone orders |
 | `/profile` | Legacy standalone profile |
 
+### Auth Routes
+| Route | Description |
+|-------|-------------|
+| `/auth/callback` | Supabase email verification callback |
+
 ## Shared Components
 
 ### Marketplace (34)
@@ -208,24 +209,21 @@ FadeIn, AnimatedCounter, Skeleton, Toast, Modal, Tabs, Dropdown, Avatar, Badge, 
 
 - **Tailwind v4** — Uses `@import "tailwindcss"` and `@theme inline` blocks (not v3 config)
 - **Static Generation** — All pages statically rendered at build time. Product pages use `generateStaticParams`
-- **Shared Layout** — DashboardLayout used across student, seller, and admin portals with dedicated sidebar configs
-- **Three Sidebar Configs** — `dashboard-sidebar.tsx` (student), `seller-sidebar.tsx`, `admin-sidebar.tsx`
+- **Shared Layout** — DashboardLayout used across student and admin portals with dedicated sidebar configs
+- **Two Sidebar Configs** — `dashboard-sidebar.tsx` (student), `admin-sidebar.tsx`
 - **Chart Components** — Pure SVG (BarChart, LineChart, DonutChart), no external charting library
-- **Portal Data** — `portal-data.ts` co-locates seller and admin dummy data
-- **No Auth** — All forms are dummy submit handlers. No real authentication
+- **Portal Data** — `portal-data.ts` co-locates admin dummy data
+- **Supabase Auth** — Email/password + Google OAuth via `@supabase/ssr`. Client has build-safe fallback for static generation. Middleware handles session refresh, route protection, and role-based redirects.
+- **Roles** — Two roles: `student` and `admin`. No seller role.
 - **No Payment** — PaymentMethodSelector is a Razorpay-ready placeholder
 - **Touch Targets** — All interactive elements ≥ 44px on mobile
 - **Reduced Motion** — All animations respect `prefers-reduced-motion`
 
 ## What's Not Implemented
 
-- Real authentication (all forms are UI-only)
 - Real payment processing (Razorpay placeholder)
 - Backend API routes
-- Database integration
-- Image uploads
-- Dark mode toggle
-- Newsletter subscription (footer form)
+- File storage / uploads
 - DataTable generic component
 - Page transition animations
 

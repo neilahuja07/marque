@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useState, useRef, useEffect, createContext, useContext, type ReactNode } from "react";
+
+const DropdownCloseContext = createContext<(() => void) | null>(null);
 
 interface DropdownProps {
   trigger: ReactNode;
@@ -36,18 +38,20 @@ export function Dropdown({ trigger, children, align = "right", className = "" }:
   }, [open]);
 
   return (
-    <div ref={ref} className={`relative inline-block ${className}`}>
-      <div onClick={() => setOpen(!open)}>{trigger}</div>
-      {open && (
-        <div
-          className={`absolute z-50 mt-1.5 min-w-[180px] rounded-[10px] border border-ink/10 bg-white py-1.5 shadow-lg animate-fade-in-up ${
-            align === "right" ? "right-0" : "left-0"
-          }`}
-        >
-          {children}
-        </div>
-      )}
-    </div>
+    <DropdownCloseContext.Provider value={() => setOpen(false)}>
+      <div ref={ref} className={`relative inline-block ${className}`}>
+        <div onClick={() => setOpen(!open)}>{trigger}</div>
+        {open && (
+          <div
+            className={`absolute z-50 mt-1.5 min-w-[180px] rounded-[10px] border border-ink/10 bg-white py-1.5 shadow-lg animate-fade-in-up ${
+              align === "right" ? "right-0" : "left-0"
+            }`}
+          >
+            {children}
+          </div>
+        )}
+      </div>
+    </DropdownCloseContext.Provider>
   );
 }
 
@@ -60,11 +64,13 @@ interface DropdownItemProps {
 }
 
 export function DropdownItem({ children, onClick, icon, danger = false, className = "" }: DropdownItemProps) {
+  const close = useContext(DropdownCloseContext);
   return (
     <button
       type="button"
       onClick={() => {
         onClick?.();
+        close?.();
       }}
       className={`flex w-full items-center gap-2.5 px-3.5 py-2 text-[13px] font-medium transition-colors ${
         danger

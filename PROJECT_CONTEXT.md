@@ -1,7 +1,7 @@
 # PROJECT_CONTEXT.md — Marque Digital Marketplace
 
 > Premium marketplace for Cambridge IGCSE, O Level & A Level study resources.
-> Frontend only. No auth, APIs, databases, or payments. All dummy data.
+> Two roles: student and admin. Supabase Auth (email/password + Google OAuth).
 
 ---
 
@@ -46,20 +46,13 @@ src/
 │   ├── verify-email/page.tsx
 │   ├── settings/page.tsx
 │   ├── wishlist/page.tsx
-│   ├── product/[slug]/page.tsx   # 15 SSG pages via generateStaticParams
+│   ├── product/[slug]/page.tsx   # Dynamic: reads from ProductProvider context
 │   ├── dashboard/                # Student dashboard
 │   │   ├── page.tsx
 │   │   ├── downloads/page.tsx
 │   │   ├── orders/page.tsx
 │   │   ├── wishlist/page.tsx
 │   │   └── profile/page.tsx
-│   ├── seller/                   # Seller portal
-│   │   ├── page.tsx              # Overview: stats, revenue chart, recent sales, reviews
-│   │   ├── products/page.tsx     # Product management table
-│   │   ├── upload/page.tsx       # 5-step upload wizard
-│   │   ├── orders/page.tsx       # Orders table + invoice modal
-│   │   ├── analytics/page.tsx    # Charts, top products, sales by subject
-│   │   └── settings/page.tsx     # Store info, payouts, notifications
 │   └── admin/                    # Admin portal
 │       ├── page.tsx              # Overview: platform stats, users, orders
 │       ├── users/page.tsx        # User management with role/status badges
@@ -72,20 +65,26 @@ src/
 ├── components/
 │   ├── marketplace/              # 34 marketplace components
 │   ├── dashboard/                # 6 dashboard components
-│   ├── providers.tsx             # ToastProvider wrapper
+│   ├── admin/                    # Admin components (product-editor)
+│   ├── providers.tsx             # AuthProvider + ProductProvider + ToastProvider
+│   ├── auth-provider.tsx         # Auth context (user, role, session, signOut)
 │   └── ui/                       # 13 shared UI primitives
 └── lib/
     ├── dummy-data.ts             # Core types + 15 products + orders + FAQs
-    ├── portal-data.ts            # Seller + admin dummy data
+    ├── product-store.tsx         # Shared product state (React context + CRUD)
+    ├── portal-data.ts            # Admin dummy data
     ├── dashboard-sidebar.tsx     # Student sidebar config
-    ├── seller-sidebar.tsx        # Seller sidebar config
     ├── admin-sidebar.tsx         # Admin sidebar config
-    └── utils.ts                  # cn() utility
+    ├── utils.ts                  # cn() utility
+    └── supabase/
+        ├── client.ts             # Browser client (with build-safe fallback)
+        ├── server.ts             # Server client (cookies-based)
+        └── middleware.ts         # Middleware client (session refresh + route protection)
 ```
 
 ---
 
-## Routes (38 total)
+## Routes (32 total)
 
 ### Core Pages
 | Route | Description | Type |
@@ -105,43 +104,33 @@ src/
 ### Auth Pages
 | Route | Description | Type |
 |-------|-------------|------|
-| `/login` | Login: split layout, branded left panel, form right | Static |
-| `/register` | Register: split layout, full form with validation | Static |
-| `/forgot-password` | Forgot password: email input, sent state | Static |
-| `/reset-password` | Reset password: new password + confirm, success state | Static |
-| `/verify-email` | Email verification: numbered steps, resend button | Static |
+| `/login` | Login: split layout, branded left panel, form right | Auth |
+| `/register` | Register: split layout, full form with validation | Auth |
+| `/forgot-password` | Forgot password: email input, sent state | Auth |
+| `/reset-password` | Reset password: new password + confirm, success state | Auth |
+| `/verify-email` | Email verification: numbered steps, resend button | Auth |
 
 ### Student Dashboard
 | Route | Description | Type |
 |-------|-------------|------|
-| `/dashboard` | Dashboard home: stats, learning, orders, downloads | Static |
-| `/dashboard/downloads` | Downloads: table/cards, search, filters, bulk actions | Static |
-| `/dashboard/orders` | Order history: table/cards, status filters, invoices | Static |
-| `/dashboard/wishlist` | Wishlist: product grid, remove, move to cart | Static |
-| `/dashboard/profile` | Profile: form, avatar, notifications, appearance, danger zone | Static |
-| `/settings` | Settings: language, region, display, email, sessions, data & privacy | Static |
-
-### Seller Portal
-| Route | Description | Type |
-|-------|-------------|------|
-| `/seller` | Seller overview: stats, revenue chart, recent sales, reviews, top products | Static |
-| `/seller/products` | Product management: search, filters, table, status badges, bulk actions | Static |
-| `/seller/upload` | Upload wizard: 5-step form (info, PDF, pricing, preview, publish) | Static |
-| `/seller/orders` | Orders: table, invoice modal, payment/refund status | Static |
-| `/seller/analytics` | Analytics: revenue/downloads charts, top products, sales by subject | Static |
-| `/seller/settings` | Settings: store info, payout, notifications, danger zone | Static |
+| `/dashboard` | Dashboard home: stats, learning, orders, downloads | Protected (student) |
+| `/dashboard/downloads` | Downloads: table/cards, search, filters, bulk actions | Protected (student) |
+| `/dashboard/orders` | Order history: table/cards, status filters, invoices | Protected (student) |
+| `/dashboard/wishlist` | Wishlist: product grid, remove, move to cart | Protected (student) |
+| `/dashboard/profile` | Profile: form, avatar, notifications, appearance, danger zone | Protected (student) |
+| `/settings` | Settings: language, region, display, email, sessions, data & privacy | Protected (student) |
 
 ### Admin Portal
 | Route | Description | Type |
 |-------|-------------|------|
-| `/admin` | Admin overview: platform stats, recent orders/users, quick actions | Static |
-| `/admin/users` | User management: search, filters, role badges, suspend/delete | Static |
-| `/admin/resources` | Resource moderation: approve, reject, feature, edit metadata | Static |
-| `/admin/orders` | Order management: refund button, status updates, invoice preview | Static |
-| `/admin/categories` | Category CRUD: subject, level, tag, resource type management | Static |
-| `/admin/reviews` | Review moderation: approve, hide, delete, reported reviews | Static |
-| `/admin/analytics` | Platform analytics: revenue, users, downloads, sales by country, top sellers | Static |
-| `/admin/settings` | Platform settings: general, branding, email, payment, storage, security | Static |
+| `/admin` | Admin overview: platform stats, recent orders/users, quick actions | Protected (admin) |
+| `/admin/users` | User management: search, filters, role badges, suspend/delete | Protected (admin) |
+| `/admin/resources` | Resource moderation: approve, reject, feature, edit metadata | Protected (admin) |
+| `/admin/orders` | Order management: refund button, status updates, invoice preview | Protected (admin) |
+| `/admin/categories` | Category CRUD: subject, level, tag, resource type management | Protected (admin) |
+| `/admin/reviews` | Review moderation: approve, hide, delete, reported reviews | Protected (admin) |
+| `/admin/analytics` | Platform analytics: revenue, users, downloads, sales by country, top sellers | Protected (admin) |
+| `/admin/settings` | Platform settings: general, branding, email, payment, storage, security | Protected (admin) |
 
 ### Legacy Pages
 | Route | Description | Type |
@@ -149,6 +138,11 @@ src/
 | `/downloads` | Legacy standalone downloads page | Static |
 | `/orders` | Legacy standalone orders page | Static |
 | `/profile` | Legacy standalone profile page | Static |
+
+### Auth Routes
+| Route | Description | Type |
+|-------|-------------|------|
+| `/auth/callback` | Supabase email verification callback | Dynamic (Middleware) |
 
 ---
 
@@ -217,7 +211,7 @@ All interactive elements meet 44px minimum touch target on mobile. Inputs use `p
 | Component | Props | Usage |
 |-----------|-------|-------|
 | `Navbar` | — | Sticky nav with scroll shadow, mobile menu, cart badge |
-| `Footer` | — | Full footer with link sections, newsletter, copyright |
+| `Footer` | — | Full footer with link sections, copyright |
 | `ResourceCard` | `product: Product` | Product card with gradient cover, rating, price |
 | `CategoryCard` | `category: Category` | Category card with accent color |
 | `Hero` | — | Hero section with auth form |
@@ -328,7 +322,6 @@ All interactive elements meet 44px minimum touch target on mobile. Inputs use `p
 
 ### Shared Sidebar Configs
 - `src/lib/dashboard-sidebar.tsx` — Student dashboard sidebar (7 items)
-- `src/lib/seller-sidebar.tsx` — Seller portal sidebar (6 items)
 - `src/lib/admin-sidebar.tsx` — Admin portal sidebar (8 items)
 
 ### DashboardLayout Pattern
@@ -340,7 +333,7 @@ DashboardLayout (sidebarItems, header, children)
 └── Main content area (children)
 ```
 
-All dashboard, seller, and admin pages wrap content in `<DashboardLayout>` with their respective sidebar items.
+All dashboard and admin pages wrap content in `<DashboardLayout>` with their respective sidebar items.
 
 ---
 
@@ -348,16 +341,18 @@ All dashboard, seller, and admin pages wrap content in `<DashboardLayout>` with 
 
 1. **Tailwind v4**: Uses `@import "tailwindcss"` and `@theme inline` blocks (not v3 config). Custom CSS in `globals.css`.
 2. **No `"use client"` in layout**: Only page components that need interactivity use `"use client"`. Root layout is a server component.
-3. **Static generation**: All pages are statically generated. Product pages use `generateStaticParams` for 15 slugs.
-4. **Component organization**: Marketplace in `src/components/marketplace/`, dashboard in `src/components/dashboard/`, shared UI in `src/components/ui/`.
-5. **Data co-location**: Core data in `src/lib/dummy-data.ts`, portal data in `src/lib/portal-data.ts`.
-6. **Auth is UI-only**: Login/Register are split-layout pages with dummy submit handlers. No real authentication.
+3. **Shared product state**: `ProductProvider` (React context) holds all products in memory. Pages consume via `useProducts()`. Changes propagate instantly across the app.
+4. **Component organization**: Marketplace in `src/components/marketplace/`, dashboard in `src/components/dashboard/`, admin in `src/components/admin/`, shared UI in `src/components/ui/`.
+5. **Data co-location**: Core data in `src/lib/dummy-data.ts`, portal data in `src/lib/portal-data.ts`, product store in `src/lib/product-store.tsx`.
+6. **Supabase Auth**: Email/password + Google OAuth via `@supabase/ssr`. Client utility has build-safe fallback for static generation. Middleware handles session refresh, route protection, and role-based redirects.
 7. **Payment is UI-only**: `PaymentMethodSelector` is a standalone component designed to be swapped for Razorpay later.
-8. **Sidebar configs are shared**: Three sidebar config files (student, seller, admin). Adding a new page only requires adding an entry.
+8. **Sidebar configs are shared**: Two sidebar config files (student, admin). Adding a new page only requires adding an entry.
 9. **Touch targets**: All interactive elements ≥ 44px on mobile. Inputs `py-3`, buttons `py-3`, icon buttons `p-2.5`.
 10. **Animations**: Only `FadeIn` (IntersectionObserver) and `AnimatedCounter`. All respect `prefers-reduced-motion`.
-11. **Charts are pure SVG**: BarChart, LineChart, DonutChart are lightweight SVG components with no external dependencies.
-12. **Portal pattern**: Seller and admin portals reuse DashboardLayout with dedicated sidebar configs, keeping the same layout pattern as the student dashboard.
+11. **Charts are pure SVG**: BarChart, LineChart, DonutChart are lightweight SVG components with no external charting library.
+12. **Roles**: Two roles — `student` and `admin`. No seller role.
+13. **Route protection**: Middleware is currently bypassed for frontend-only development. Auth will be re-enabled after Supabase integration.
+14. **Product CRUD**: Admin can add, edit, delete, duplicate, publish/unpublish, and feature/unfeature resources via the product editor modal. All changes reflect immediately across browse, search, categories, home featured, and product detail pages.
 
 ---
 
@@ -365,7 +360,7 @@ All dashboard, seller, and admin pages wrap content in `<DashboardLayout>` with 
 
 - **Files**: kebab-case (`resource-card.tsx`, `dashboard-layout.tsx`)
 - **Components**: PascalCase (`ResourceCard`, `DashboardLayout`)
-- **Routes**: lowercase (`/dashboard/downloads`, `/seller/products`)
+- **Routes**: lowercase (`/dashboard/downloads`, `/admin/analytics`)
 - **Types**: PascalCase, exported from `dummy-data.ts` or `portal-data.ts`
 - **CSS classes**: kebab-case, prefixed with `btn-`, `nav-`, `card-`, `animate-`
 - **Tailwind tokens**: `ink`, `parchment`, `slate`, `teal`, `teal-dark`, `brass`, `sage`, `warm-gray`
@@ -376,17 +371,15 @@ All dashboard, seller, and admin pages wrap content in `<DashboardLayout>` with 
 ## Remaining TODOs
 
 ### Pages not yet built
-- All pages are now built (38 routes + 15 SSG product pages)
+- All pages are now built (32 routes + 15 SSG product pages)
 
 ### Features not implemented
-- Real authentication (all forms are dummy)
 - Real payment processing (Razorpay placeholder exists)
 - Backend API routes
 - Database integration
 - Image uploads (avatar change is button-only)
-- Dark mode toggle (appearance setting exists but doesn't apply theme)
-- Newsletter subscription (footer form is non-functional)
-- Search functionality (all search inputs filter client-side only)
+- Google OAuth (button exists, requires Supabase provider config)
+- PDF file upload in product editor (placeholder UI exists)
 
 ### Component gaps
 - `DataTable` generic sortable/filterable table (currently duplicated per page)
@@ -397,12 +390,14 @@ All dashboard, seller, and admin pages wrap content in `<DashboardLayout>` with 
 ## Important Implementation Notes
 
 - **Build command**: `npm run build` — always run before committing to verify no type errors
-- **Static pages**: All pages are statically rendered at build time
-- **Product pages**: 15 products statically generated via `generateStaticParams`
+- **Static pages**: Most pages are statically rendered at build time. Product detail page (`/product/[slug]`) is dynamic (client component reading from ProductProvider context).
+- **Product store**: `ProductProvider` wraps the app via `Providers`. All product state is shared React context. Use `useProducts()` hook to access products and CRUD methods.
 - **Mobile menu**: Navbar has a hamburger → slide-in drawer pattern
 - **Cart state**: Client-side only `useState`, resets on page load
 - **Order confirmation**: Modal, not a separate page
 - **Auth in hero**: Homepage hero has an inline sign-in/sign-up form (separate `/login` and `/register` pages also exist with split layout)
+- **Supabase env vars**: `.env.local` must have `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Client has build-safe fallback for missing values.
+- **Route protection**: Middleware runs on every non-static request. Enforces auth for dashboard routes, redirects guests to `/login`, and enforces role-based access.
 - **Sidebar collapse**: Desktop sidebar can collapse to 72px icon-only mode
 - **Mobile dashboard**: Sidebar becomes a drawer overlay, tables become cards
 - **Seller/Admin portals**: Use same DashboardLayout as student dashboard, with dedicated sidebar configs

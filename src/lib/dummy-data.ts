@@ -1,45 +1,5 @@
-export type ProductType = "Past Paper" | "Mock Test" | "Worksheet" | "Revision Notes";
-
-export type ProductReview = {
-  name: string;
-  role: string;
-  rating: number;
-  date: string;
-  text: string;
-};
-
-export type Product = {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  subject: string;
-  level: string;
-  examCode: string;
-  type: ProductType;
-  price: number;
-  originalPrice?: number;
-  rating: number;
-  reviewCount: number;
-  pages: number;
-  downloads: number;
-  cover: string;
-  bestseller: boolean;
-  tags: string[];
-  author: string;
-  updatedAt: string;
-  examBoard?: string;
-  session?: string;
-  language?: string;
-  format?: string;
-  version?: string;
-  longDescription?: string;
-  whatsIncluded?: string[];
-  syllabusCoverage?: string[];
-  ratingDistribution?: { stars: number; count: number }[];
-  reviews?: ProductReview[];
-  productFaqs?: FAQ[];
-};
+import type { Product, ProductType, FAQ } from "@/lib/types";
+export type { Product, ProductType, ProductReview, FAQ } from "@/lib/types";
 
 export type Category = {
   name: string;
@@ -58,11 +18,6 @@ export type Testimonial = {
 export type Stat = {
   value: string;
   label: string;
-};
-
-export type FAQ = {
-  question: string;
-  answer: string;
 };
 
 export type Order = {
@@ -122,6 +77,8 @@ export const products: Product[] = [
     downloads: 8420,
     cover: "from-teal-dark to-ink",
     bestseller: true,
+    published: true,
+    featured: true,
     tags: ["algebra", "paper 4", "extended"],
     author: "Dr. Sarah Chen",
     updatedAt: "2025-05-15",
@@ -241,6 +198,8 @@ export const products: Product[] = [
     downloads: 6250,
     cover: "from-teal to-teal-dark",
     bestseller: true,
+    published: true,
+    featured: true,
     tags: ["physics", "revision", "complete"],
     author: "James Wright",
     updatedAt: "2024-11-20",
@@ -262,6 +221,8 @@ export const products: Product[] = [
     downloads: 5840,
     cover: "from-ink to-teal-dark",
     bestseller: true,
+    published: true,
+    featured: true,
     tags: ["english", "past papers", "decade"],
     author: "Prof. Amara Osei",
     updatedAt: "2025-02-10",
@@ -283,6 +244,8 @@ export const products: Product[] = [
     downloads: 3210,
     cover: "from-teal-dark to-teal",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["chemistry", "mock test", "A level"],
     author: "Dr. Priya Nair",
     updatedAt: "2025-04-01",
@@ -303,6 +266,8 @@ export const products: Product[] = [
     downloads: 4100,
     cover: "from-sage to-teal-dark",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["mathematics", "worksheets", "practice"],
     author: "Dr. Sarah Chen",
     updatedAt: "2025-03-18",
@@ -323,6 +288,8 @@ export const products: Product[] = [
     downloads: 7200,
     cover: "from-teal to-sage",
     bestseller: true,
+    published: true,
+    featured: true,
     tags: ["biology", "flashcards", "revision"],
     author: "Lisa Park",
     updatedAt: "2025-01-25",
@@ -344,6 +311,8 @@ export const products: Product[] = [
     downloads: 3980,
     cover: "from-ink to-sage",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["mathematics", "past papers", "O level"],
     author: "Dr. Sarah Chen",
     updatedAt: "2025-06-02",
@@ -364,6 +333,8 @@ export const products: Product[] = [
     pages: 84,
     cover: "from-teal-dark to-ink",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["physics", "mock test", "A level"],
     author: "James Wright",
     updatedAt: "2025-05-20",
@@ -384,6 +355,8 @@ export const products: Product[] = [
     downloads: 2340,
     cover: "from-brass to-ink",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["english", "writing", "worksheets"],
     author: "Prof. Amara Osei",
     updatedAt: "2025-04-10",
@@ -404,6 +377,8 @@ export const products: Product[] = [
     pages: 142,
     cover: "from-sage to-ink",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["mathematics", "further maths", "revision"],
     author: "Dr. Sarah Chen",
     updatedAt: "2025-03-28",
@@ -424,6 +399,8 @@ export const products: Product[] = [
     pages: 120,
     cover: "from-teal to-ink",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["chemistry", "practice", "questions"],
     author: "Dr. Priya Nair",
     updatedAt: "2025-05-08",
@@ -444,6 +421,8 @@ export const products: Product[] = [
     pages: 108,
     cover: "from-ink to-brass",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["english", "literature", "study guide"],
     author: "Prof. Amara Osei",
     updatedAt: "2024-12-15",
@@ -464,6 +443,8 @@ export const products: Product[] = [
     pages: 36,
     cover: "from-sage to-teal",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["mathematics", "core", "paper 2"],
     author: "Dr. Sarah Chen",
     updatedAt: "2025-06-05",
@@ -485,6 +466,8 @@ export const products: Product[] = [
     pages: 92,
     cover: "from-teal to-teal-dark",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["biology", "mock test", "A level"],
     author: "Lisa Park",
     updatedAt: "2025-04-22",
@@ -505,6 +488,8 @@ export const products: Product[] = [
     pages: 156,
     cover: "from-brass to-teal-dark",
     bestseller: false,
+    published: true,
+    featured: false,
     tags: ["english", "second language", "complete"],
     author: "Prof. Amara Osei",
     updatedAt: "2025-05-30",

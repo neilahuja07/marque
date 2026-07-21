@@ -4,7 +4,8 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Navbar, Footer, ResourceCard } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
-import { products } from "@/lib/dummy-data";
+import { useProducts } from "@/lib/product-store";
+import type { Product } from "@/lib/types";
 import { FilterSidebar, type FilterState, defaultFilters } from "@/components/marketplace/filter-sidebar";
 import { Pagination } from "@/components/marketplace/pagination";
 import { MobileFilterDrawer } from "@/components/marketplace/mobile-filter-drawer";
@@ -21,7 +22,7 @@ function parsePriceRange(range: string, price: number): boolean {
   return true;
 }
 
-function sortProducts(items: typeof products, sort: string) {
+function sortProducts(items: Product[], sort: string) {
   const sorted = [...items];
   switch (sort) {
     case "newest":
@@ -39,12 +40,26 @@ function sortProducts(items: typeof products, sort: string) {
 }
 
 export default function BrowsePage() {
+  const { products } = useProducts();
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
+  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    let result = products;
+    let result = products.filter((p) => p.published);
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.subject.toLowerCase().includes(q) ||
+          p.examCode.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          p.tags.some((t) => t.toLowerCase().includes(q)),
+      );
+    }
 
     if (filters.subjects.length > 0) {
       result = result.filter((p) => filters.subjects.includes(p.subject));
@@ -60,7 +75,7 @@ export default function BrowsePage() {
     }
 
     return sortProducts(result, filters.sort);
-  }, [filters]);
+  }, [products, filters, search]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
@@ -98,6 +113,8 @@ export default function BrowsePage() {
               </svg>
               <input
                 type="text"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 placeholder="Search by title, subject or exam code…"
                 className="input-field w-full rounded-[8px] border border-ink/15 bg-parchment py-3 pl-10 pr-4 text-[14px] text-ink placeholder:text-ink/40"
               />

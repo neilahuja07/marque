@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type ProductReview } from "@/lib/dummy-data";
+import type { ProductReview } from "@/lib/types";
 
 interface ReviewsSectionProps {
   rating: number;

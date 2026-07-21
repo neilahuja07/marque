@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Product } from "@/lib/dummy-data";
+import type { Product } from "@/lib/types";
 import { ExamCodeBadge } from "./exam-code-badge";
 import { RatingStars } from "./rating-stars";
 

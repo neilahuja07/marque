@@ -1,20 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { AuthBranding } from "@/components/marketplace/auth-branding";
 import { AuthCard } from "@/components/marketplace/auth-card";
+import { createClient } from "@/lib/supabase/client";
 
 export default function VerifyEmailPage() {
+  const supabase = createClient();
   const [resent, setResent] = useState(false);
   const [isResending, setIsResending] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
 
-  const handleResend = () => {
+  useEffect(() => {
+    const email = sessionStorage.getItem("marque_signup_email");
+    if (email) {
+      setUserEmail(email);
+    } else {
+      const fetchEmail = async () => {
+        const { data } = await supabase.auth.getUser();
+        if (data.user?.email) setUserEmail(data.user.email);
+      };
+      fetchEmail();
+    }
+  }, [supabase]);
+
+  const handleResend = async () => {
+    if (!userEmail) return;
     setIsResending(true);
-    setTimeout(() => {
-      setIsResending(false);
+
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: userEmail,
+    });
+
+    setIsResending(false);
+
+    if (!error) {
       setResent(true);
-    }, 1500);
+    }
   };
 
   return (
@@ -68,7 +92,7 @@ export default function VerifyEmailPage() {
               <button
                 type="button"
                 onClick={handleResend}
-                disabled={isResending}
+                disabled={isResending || !userEmail}
                 className="flex w-full items-center justify-center gap-2 rounded-[8px] border border-ink/15 bg-parchment px-4 py-3 text-[13px] font-medium text-ink transition-all hover:bg-warm-gray disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isResending ? (
@@ -77,7 +101,7 @@ export default function VerifyEmailPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Resending\u2026
+                    Resending…
                   </>
                 ) : (
                   <>

@@ -27,8 +27,6 @@ export default function ProfilePage() {
     marketing: false,
     weeklyDigest: true,
   });
-  const [appearance, setAppearance] = useState("system");
-
   const update = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -149,30 +147,6 @@ export default function ProfilePage() {
                       <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${notifications[item.key] ? "translate-x-6" : "translate-x-1"}`} />
                     </button>
                   </label>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
-
-          {/* Appearance */}
-          <FadeIn delay={200}>
-            <div className="rounded-[12px] border border-ink/10 bg-white p-6">
-              <h2 className="font-display text-[18px] text-ink">Appearance</h2>
-              <p className="mt-1 text-[13px] text-slate">Select your preferred theme.</p>
-              <div className="mt-5 flex gap-3">
-                {(["light", "dark", "system"] as const).map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => setAppearance(option)}
-                    className={`rounded-[8px] border px-5 py-2.5 text-[13px] font-medium capitalize transition-colors ${
-                      appearance === option
-                        ? "border-teal-dark bg-teal-dark/5 text-teal-dark"
-                        : "border-ink/10 text-slate hover:border-ink/20 hover:text-ink"
-                    }`}
-                  >
-                    {option}
-                  </button>
                 ))}
               </div>
             </div>

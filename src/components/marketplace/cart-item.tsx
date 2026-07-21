@@ -1,6 +1,6 @@
 "use client";
 
-import { type Product } from "@/lib/dummy-data";
+import type { Product } from "@/lib/types";
 import { ExamCodeBadge } from "./exam-code-badge";
 
 interface CartItemProps {
