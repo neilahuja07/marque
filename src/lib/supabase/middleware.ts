@@ -62,8 +62,8 @@ export async function updateSession(request: NextRequest) {
     const dashboardRoutes: Record<string, string[]> = {
       student: [
         "/dashboard", "/dashboard/downloads", "/dashboard/orders",
-        "/dashboard/wishlist", "/dashboard/profile", "/settings",
-        "/wishlist", "/orders", "/profile", "/downloads",
+        "/dashboard/profile", "/settings",
+        "/orders", "/profile", "/downloads",
       ],
       admin: [
         "/admin", "/admin/users", "/admin/resources", "/admin/orders",

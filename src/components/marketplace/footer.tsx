@@ -4,17 +4,17 @@ const footerSections = [
   {
     title: "Subjects",
     links: [
-      { label: "Mathematics", href: "/categories/mathematics" },
-      { label: "Science", href: "/categories/science" },
-      { label: "English", href: "/categories/english" },
+      { label: "Mathematics", href: "/browse?subject=Mathematics" },
+      { label: "Science", href: "/browse?subject=Science" },
+      { label: "English", href: "/browse?subject=English" },
     ],
   },
   {
     title: "Resource types",
     links: [
-      { label: "Past papers", href: "/browse?type=Past+Paper" },
-      { label: "Mock tests", href: "/browse?type=Mock+Test" },
-      { label: "Revision notes", href: "/browse?type=Revision+Notes" },
+      { label: "Past papers", href: "/browse" },
+      { label: "Mock tests", href: "/browse" },
+      { label: "Revision notes", href: "/browse" },
     ],
   },
   {
@@ -51,7 +51,7 @@ export function Footer() {
               <h4 className="text-[13px] font-medium text-ink">{section.title}</h4>
               <ul className="mt-3 space-y-0.5 text-[13px] text-slate">
                 {section.links.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.label}>
                     <Link href={link.href} className="block py-1.5 transition-colors hover:text-ink">
                       {link.label}
                     </Link>

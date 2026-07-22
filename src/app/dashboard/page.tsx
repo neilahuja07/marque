@@ -97,11 +97,10 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-7xl space-y-8">
         {/* ── Stats ── */}
         <FadeIn>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <DashboardStatCard label="Downloads" target="3" icon={statIcons.downloads} trend={{ value: "+2 this week", positive: true }} />
             <DashboardStatCard label="Orders" target="3" icon={statIcons.orders} />
             <DashboardStatCard label="Resources owned" target="5" icon={statIcons.resources} trend={{ value: "+1 this month", positive: true }} />
-            <DashboardStatCard label="Wishlist" target="5" icon={statIcons.wishlist} />
           </div>
         </FadeIn>
 

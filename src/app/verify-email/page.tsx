@@ -50,10 +50,7 @@ export default function VerifyEmailPage() {
 
       {/* Right: Content */}
       <div className="flex w-full flex-1 items-center justify-center px-6 py-10 lg:w-[55%]">
-        <AuthCard
-          title="Verify your email"
-          subtitle="We\u2019ve sent a verification link to your email address."
-        >
+        <AuthCard title="Verify your email">
           <div className="space-y-6">
             {/* Icon */}
             <div className="flex items-center justify-center">
@@ -63,6 +60,17 @@ export default function VerifyEmailPage() {
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
               </div>
+            </div>
+
+            {/* Description */}
+            <div className="text-center">
+              <p className="text-[14px] text-slate">We&apos;ve sent a verification link to:</p>
+              {userEmail && (
+                <p className="mt-2 break-all rounded-[8px] border border-ink/10 bg-parchment px-3 py-2 text-[14px] font-medium text-ink">
+                  {userEmail}
+                </p>
+              )}
+              <p className="mt-2 text-[14px] text-slate">Please check your inbox and click the verification link to continue.</p>
             </div>
 
             {/* Steps */}

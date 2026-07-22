@@ -2,9 +2,11 @@
 
 import { use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Navbar, Footer, ResourceCard } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useProducts } from "@/lib/product-store";
+import { useCart } from "@/lib/cart-store";
 import { Breadcrumbs } from "@/components/marketplace/breadcrumbs";
 import { ProductGallery } from "@/components/marketplace/product-gallery";
 import { WhatsIncluded } from "@/components/marketplace/whats-included";
@@ -18,7 +20,9 @@ import { ExamCodeBadge } from "@/components/marketplace/exam-code-badge";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
+  const router = useRouter();
   const { getProductBySlug, products } = useProducts();
+  const { addItem } = useCart();
   const product = getProductBySlug(slug);
 
   if (!product) {
@@ -81,7 +85,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
               items={[
                 { label: "Home", href: "/" },
                 { label: "Browse", href: "/browse" },
-                { label: product.subject, href: `/categories/${product.subject.toLowerCase()}` },
+                { label: product.subject, href: `/browse?subject=${product.subject}` },
                 { label: product.title },
               ]}
             />
@@ -165,22 +169,25 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
                 {/* CTAs */}
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <button className="btn-primary flex-1 rounded-[8px] bg-teal-dark px-6 py-3 text-[15px] font-medium text-white">
+                  <button
+                    onClick={() => addItem(product)}
+                    className="btn-primary flex-1 rounded-[8px] bg-teal-dark px-6 py-3 text-[15px] font-medium text-white"
+                  >
                     Add to cart
                   </button>
-                  <button className="btn-primary flex-1 rounded-[8px] bg-sage px-6 py-3 text-[15px] font-medium text-ink">
+                  <button
+                    onClick={() => {
+                      addItem(product);
+                      router.push("/checkout?buyNow=true");
+                    }}
+                    className="btn-primary flex-1 rounded-[8px] bg-sage px-6 py-3 text-[15px] font-medium text-ink"
+                  >
                     Buy now
                   </button>
                 </div>
 
                 {/* Secondary actions */}
                 <div className="mt-4 flex items-center gap-2">
-                  <button className="flex items-center gap-2 rounded-[8px] py-2.5 px-3 text-[13px] text-slate transition-colors hover:text-ink">
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                    Wishlist
-                  </button>
                   <button className="flex items-center gap-2 rounded-[8px] py-2.5 px-3 text-[13px] text-slate transition-colors hover:text-ink">
                     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="18" cy="5" r="3" />

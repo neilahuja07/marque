@@ -40,16 +40,16 @@ export function ResourceCard({ product }: { product: Product }) {
           {product.type}
         </span>
       </div>
-      <div className="flex flex-1 flex-col gap-2.5 p-5">
+      <div className="flex flex-1 flex-col gap-3 p-5">
         <ExamCodeBadge code={product.examCode} />
-        <h3 className="font-display text-[16px] leading-snug text-ink transition-colors group-hover:text-teal-dark">
+        <h3 className="line-clamp-2 font-display text-[17px] font-medium leading-snug text-ink transition-colors group-hover:text-teal-dark">
           {product.title}
         </h3>
-        <p className="text-[13px] text-slate">
+        <p className="text-[13px] leading-relaxed text-slate">
           {product.subject} · {product.level} · {product.pages} pages
         </p>
         <RatingStars rating={product.rating} count={product.reviewCount} />
-        <div className="mt-auto flex items-center justify-between pt-3">
+        <div className="mt-auto flex items-center justify-between pt-4">
           <div className="flex items-center gap-2">
             <span className="font-display text-[19px] text-ink">${product.price.toFixed(2)}</span>
             {product.originalPrice && (

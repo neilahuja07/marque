@@ -3,18 +3,23 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
+import { useCart } from "@/lib/cart-store";
 
 const navLinks = [
   { label: "Browse", href: "/browse" },
-  { label: "Categories", href: "/categories" },
-  { label: "About", href: "/about" },
   { label: "FAQ", href: "/faq" },
 ];
 
 export function Navbar() {
   const { user, role, loading, signOut } = useAuth();
+  const { totalCount } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    setCartCount(totalCount());
+  }, [totalCount]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -77,9 +82,11 @@ export function Navbar() {
               <circle cx="9.5" cy="20.5" r="1.2" />
               <circle cx="17.5" cy="20.5" r="1.2" />
             </svg>
-            <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-teal-dark text-[10px] text-white">
-              2
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-teal-dark text-[10px] text-white">
+                {cartCount}
+              </span>
+            )}
           </Link>
 
           {!loading && (

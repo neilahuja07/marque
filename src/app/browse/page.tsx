@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Navbar, Footer, ResourceCard } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useProducts } from "@/lib/product-store";
@@ -12,15 +13,6 @@ import { MobileFilterDrawer } from "@/components/marketplace/mobile-filter-drawe
 import { EmptyState, NoResults } from "@/components/marketplace/browse-states";
 
 const ITEMS_PER_PAGE = 9;
-
-function parsePriceRange(range: string, price: number): boolean {
-  if (range === "all") return true;
-  if (range === "0-5") return price < 5;
-  if (range === "5-10") return price >= 5 && price < 10;
-  if (range === "10-15") return price >= 10 && price < 15;
-  if (range === "15+") return price >= 15;
-  return true;
-}
 
 function sortProducts(items: Product[], sort: string) {
   const sorted = [...items];
@@ -40,8 +32,14 @@ function sortProducts(items: Product[], sort: string) {
 }
 
 export default function BrowsePage() {
+  const searchParams = useSearchParams();
+  const initialSubject = searchParams.get("subject") || undefined;
+
   const { products } = useProducts();
-  const [filters, setFilters] = useState<FilterState>(defaultFilters);
+  const [filters, setFilters] = useState<FilterState>(() => ({
+    ...defaultFilters,
+    subjects: initialSubject ? [initialSubject] : [],
+  }));
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -67,12 +65,6 @@ export default function BrowsePage() {
     if (filters.levels.length > 0) {
       result = result.filter((p) => filters.levels.includes(p.level));
     }
-    if (filters.types.length > 0) {
-      result = result.filter((p) => filters.types.includes(p.type));
-    }
-    if (filters.priceRange !== "all") {
-      result = result.filter((p) => parsePriceRange(filters.priceRange, p.price));
-    }
 
     return sortProducts(result, filters.sort);
   }, [products, filters, search]);
@@ -95,7 +87,7 @@ export default function BrowsePage() {
           <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
             <p className="exam-code text-[12px] text-brass">Browse</p>
             <h1 className="mt-2 font-display text-[32px] text-ink md:text-[40px]">
-              All resources
+              {initialSubject ? `${initialSubject} resources` : "All resources"}
             </h1>
             <p className="mt-3 max-w-md text-[14px] leading-relaxed text-slate">
               Past papers, mock tests, worksheets and revision notes — every resource tagged to its exact exam code.
@@ -106,7 +98,7 @@ export default function BrowsePage() {
         {/* Search + mobile filter toggle */}
         <section className="border-b border-ink/10 bg-white">
           <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-4">
-            <div className="relative flex-1">
+            <div className="relative max-w-[70%]">
               <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <path d="M21 21l-4.35-4.35" />
@@ -136,8 +128,8 @@ export default function BrowsePage() {
           <div className="flex gap-10">
             {/* Desktop sidebar */}
             <div className="hidden w-56 shrink-0 md:block">
-              <div className="sticky top-24">
-                <FilterSidebar onFilterChange={handleFilterChange} />
+              <div className="sticky top-24 rounded-[var(--radius-card)] border border-ink/[0.06] bg-warm-gray/40 p-5">
+                <FilterSidebar onFilterChange={handleFilterChange} initialSubject={initialSubject} />
               </div>
             </div>
 
@@ -145,9 +137,10 @@ export default function BrowsePage() {
             <div className="flex-1 min-w-0">
               {/* Results header */}
               <div className="flex items-center justify-between">
-                <p className="text-[13px] text-slate">
+                <p className="text-[13px] text-slate/70">
+                  Showing{" "}
                   <span className="font-medium text-ink">{filtered.length}</span>{" "}
-                  {filtered.length === 1 ? "resource" : "resources"} found
+                  {filtered.length === 1 ? "resource" : "resources"}
                 </p>
               </div>
 

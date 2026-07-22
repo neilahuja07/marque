@@ -47,7 +47,7 @@ export function CategoryCard({
   const t = themes[accent];
   return (
     <Link
-      href={`/categories/${slug}`}
+      href={`/browse?subject=${name}`}
       className={`card-hover group relative flex flex-col justify-between overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white p-7 ${t.ring}`}
     >
       <div className={`absolute -right-8 -top-8 h-32 w-32 rounded-full ${t.iconWrap} opacity-40 blur-2xl`} />

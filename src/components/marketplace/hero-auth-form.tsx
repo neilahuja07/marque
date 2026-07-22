@@ -104,7 +104,7 @@ export function HeroAuthForm() {
 
   if (forgotPassword) {
     return (
-      <div className="rounded-[var(--radius-card)] border border-ink/10 bg-white p-6 shadow-[var(--shadow-soft)]">
+      <div className="auth-card p-6">
         <p className="exam-code text-[12px] text-brass">Account recovery</p>
         <h3 className="mt-2 font-display text-[22px] text-ink">Reset password</h3>
         <p className="mt-2 text-[13px] leading-relaxed text-slate">
@@ -147,7 +147,7 @@ export function HeroAuthForm() {
                 onChange={(e) => setForgotEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="input-field mt-1.5 block w-full rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
+                className="input-field mt-1.5 block w-full rounded-[8px] border px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
               />
             </div>
             <button
@@ -169,7 +169,7 @@ export function HeroAuthForm() {
               setEmail(forgotEmail);
               setError("");
             }}
-            className="py-1 font-medium text-teal-dark hover:underline"
+            className="auth-link py-1 font-medium"
           >
             Sign in
           </button>
@@ -179,22 +179,18 @@ export function HeroAuthForm() {
   }
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-ink/10 bg-white p-6 shadow-[var(--shadow-soft)]">
+    <div className="auth-card p-6">
       <div className="flex items-center gap-2 border-b border-ink/10 pb-3">
         <button
           onClick={() => { setMode("signin"); setShowPassword(false); setShowConfirmPassword(false); setError(""); }}
-          className={`py-1.5 text-[14px] font-medium transition-colors ${
-            mode === "signin" ? "text-ink" : "text-ink/40 hover:text-ink/60"
-          }`}
+          className={`auth-tab py-1.5 text-[14px] font-medium ${mode === "signin" ? "active text-ink" : ""}`}
         >
           Sign in
         </button>
         <span className="text-ink/20">|</span>
         <button
           onClick={() => { setMode("signup"); setShowPassword(false); setShowConfirmPassword(false); setError(""); }}
-          className={`py-1.5 text-[14px] font-medium transition-colors ${
-            mode === "signup" ? "text-ink" : "text-ink/40 hover:text-ink/60"
-          }`}
+          className={`auth-tab py-1.5 text-[14px] font-medium ${mode === "signup" ? "active text-ink" : ""}`}
         >
           Sign up
         </button>
@@ -247,7 +243,7 @@ export function HeroAuthForm() {
               <button
                 type="button"
                 onClick={() => { setForgotPassword(true); setError(""); }}
-                className="py-1 text-[12px] text-teal-dark hover:underline"
+                className="auth-link py-1 text-[12px] font-medium"
               >
                 Forgot password?
               </button>
@@ -339,7 +335,7 @@ export function HeroAuthForm() {
             setShowConfirmPassword(false);
             setError("");
           }}
-          className="py-1 font-medium text-teal-dark hover:underline"
+          className="auth-link py-1 font-medium"
         >
           {mode === "signin" ? "Sign up for free" : "Sign in"}
         </button>

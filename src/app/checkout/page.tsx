@@ -2,15 +2,14 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Navbar, Footer } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
-import { products } from "@/lib/dummy-data";
+import { useCart, type CartItem } from "@/lib/cart-store";
 import { Breadcrumbs } from "@/components/marketplace/breadcrumbs";
 import { TrustSection } from "@/components/marketplace/trust-section";
 import { PaymentMethodSelector, type PaymentMethod } from "@/components/marketplace/payment-method-selector";
 import { OrderConfirmationModal } from "@/components/marketplace/order-confirmation-modal";
-
-const checkoutItems = [products[0], products[1], products[2]];
 
 type FormData = {
   email: string;
@@ -48,21 +47,39 @@ const countries = [
 ];
 
 export default function CheckoutPage() {
+  const searchParams = useSearchParams();
+  const isBuyNow = searchParams.get("buyNow") === "true";
+  const { items } = useCart();
+
+  const checkoutItems: CartItem[] = useMemo(() => {
+    if (isBuyNow && items.length > 0) {
+      return [items[items.length - 1]];
+    }
+    return items;
+  }, [isBuyNow, items]);
+
   const [form, setForm] = useState<FormData>(initialForm);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("upi");
   const [showModal, setShowModal] = useState(false);
 
-  const subtotal = checkoutItems.reduce((sum, p) => sum + p.price, 0);
-  const discount = checkoutItems.reduce(
-    (sum, p) => (p.originalPrice ? sum + (p.originalPrice - p.price) : sum),
-    0
+  const subtotal = checkoutItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
   );
+  const discount = checkoutItems.reduce((sum, item) => {
+    if (item.product.originalPrice)
+      return (
+        sum +
+        (item.product.originalPrice - item.product.price) * item.quantity
+      );
+    return sum;
+  }, 0);
   const tax = Math.round(subtotal * 0.05 * 100) / 100;
   const total = subtotal - discount + tax;
 
   const orderNumber = useMemo(
     () => `MRQ-${Math.floor(10000 + Math.random() * 90000)}`,
-    []
+    [],
   );
 
   const update = (field: keyof FormData, value: string) =>
@@ -268,7 +285,7 @@ export default function CheckoutPage() {
                     {/* Items */}
                     <div className="mt-5 space-y-4">
                       {checkoutItems.map((item) => (
-                        <div key={item.id} className="flex items-start gap-3">
+                        <div key={item.product.id} className="flex items-start gap-3">
                           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[6px] bg-parchment">
                             <div className="flex h-full items-center justify-center">
                               <svg viewBox="0 0 24 24" className="h-6 w-6 text-ink/20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -281,10 +298,10 @@ export default function CheckoutPage() {
                             </div>
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-[13px] font-medium text-ink line-clamp-2">{item.title}</p>
-                            <p className="mt-0.5 text-[12px] text-slate">{item.subject} · {item.level}</p>
+                            <p className="text-[13px] font-medium text-ink line-clamp-2">{item.product.title}</p>
+                            <p className="mt-0.5 text-[12px] text-slate">{item.product.subject} · {item.product.level}</p>
                           </div>
-                          <p className="shrink-0 text-[13px] font-medium text-ink">${item.price.toFixed(2)}</p>
+                          <p className="shrink-0 text-[13px] font-medium text-ink">${(item.product.price * item.quantity).toFixed(2)}</p>
                         </div>
                       ))}
                     </div>
