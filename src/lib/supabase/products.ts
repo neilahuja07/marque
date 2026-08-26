@@ -1,5 +1,13 @@
+"use client";
+
 import { createClient } from "./client";
-import type { Product, ProductType, ProductReview, FAQ } from "@/lib/types";
+import type { Product, ProductType, FAQ } from "@/lib/types";
+
+const THUMBNAIL_BUCKET = "resource-thumbnails";
+const PREVIEW_BUCKET = "product-previews";
+const PDF_BUCKET = "resource-pdfs";
+
+export { THUMBNAIL_BUCKET, PREVIEW_BUCKET, PDF_BUCKET };
 
 type DbProduct = {
   id: string;
@@ -12,7 +20,6 @@ type DbProduct = {
   type: string;
   price: number;
   original_price: number | null;
-  discount: number | null;
   rating: number;
   review_count: number;
   pages: number;
@@ -33,12 +40,13 @@ type DbProduct = {
   format: string;
   version: string | null;
   thumbnail: string | null;
+  preview_images: string[] | null;
   pdf_path: string | null;
   long_description: string | null;
   whats_included: string[] | null;
   syllabus_coverage: string[] | null;
   rating_distribution: { stars: number; count: number }[] | null;
-  reviews: ProductReview[] | null;
+  reviews: { name: string; role: string; rating: number; date: string; text: string }[] | null;
   product_faqs: FAQ[] | null;
   user_id: string | null;
 };
@@ -68,7 +76,6 @@ function toCamelCase(row: DbProduct): Product {
     type: row.type as ProductType,
     price: row.price,
     originalPrice: row.original_price ?? undefined,
-    discount: row.discount ?? undefined,
     rating: row.rating,
     reviewCount: row.review_count,
     pages: row.pages,
@@ -80,6 +87,7 @@ function toCamelCase(row: DbProduct): Product {
     tags: parseJsonArray(row.tags),
     author: row.author,
     updatedAt: row.updated_at,
+    createdAt: row.created_at,
     examBoard: row.exam_board ?? undefined,
     session: row.session ?? undefined,
     paper: row.paper ?? undefined,
@@ -88,6 +96,7 @@ function toCamelCase(row: DbProduct): Product {
     format: row.format,
     version: row.version ?? undefined,
     thumbnail: row.thumbnail ?? undefined,
+    previewImages: row.preview_images ?? undefined,
     pdfUrl: row.pdf_path ?? undefined,
     longDescription: row.long_description ?? undefined,
     whatsIncluded: row.whats_included ?? undefined,
@@ -100,42 +109,43 @@ function toCamelCase(row: DbProduct): Product {
 
 function toSnakeCase(product: Partial<Product>): Record<string, unknown> {
   const data: Record<string, unknown> = {};
-  if ("title" in product) data.title = product.title;
-  if ("slug" in product) data.slug = product.slug;
-  if ("description" in product) data.description = product.description;
-  if ("subject" in product) data.subject = product.subject;
-  if ("level" in product) data.level = product.level;
-  if ("examCode" in product) data.exam_code = product.examCode;
-  if ("type" in product) data.type = product.type;
-  if ("price" in product) data.price = product.price;
-  if ("originalPrice" in product) data.original_price = product.originalPrice ?? null;
-  if ("discount" in product) data.discount = product.discount ?? null;
-  if ("rating" in product) data.rating = product.rating;
-  if ("reviewCount" in product) data.review_count = product.reviewCount;
-  if ("pages" in product) data.pages = product.pages;
-  if ("downloads" in product) data.downloads = product.downloads;
-  if ("cover" in product) data.cover = product.cover;
-  if ("bestseller" in product) data.bestseller = product.bestseller;
-  if ("published" in product) data.published = product.published;
-  if ("featured" in product) data.featured = product.featured;
-  if ("tags" in product) data.tags = product.tags;
-  if ("author" in product) data.author = product.author;
-  if ("updatedAt" in product) data.updated_at = product.updatedAt;
-  if ("examBoard" in product) data.exam_board = product.examBoard ?? null;
-  if ("session" in product) data.session = product.session ?? null;
-  if ("paper" in product) data.paper = product.paper ?? null;
-  if ("variant" in product) data.variant = product.variant ?? null;
-  if ("language" in product) data.language = product.language;
-  if ("format" in product) data.format = product.format;
-  if ("version" in product) data.version = product.version ?? null;
-  if ("thumbnail" in product) data.thumbnail = product.thumbnail ?? null;
-  if ("pdfUrl" in product) data.pdf_path = product.pdfUrl ?? null;
-  if ("longDescription" in product) data.long_description = product.longDescription ?? null;
-  if ("whatsIncluded" in product) data.whats_included = product.whatsIncluded ?? null;
-  if ("syllabusCoverage" in product) data.syllabus_coverage = product.syllabusCoverage ?? null;
-  if ("ratingDistribution" in product) data.rating_distribution = product.ratingDistribution ?? null;
-  if ("reviews" in product) data.reviews = product.reviews ?? null;
-  if ("productFaqs" in product) data.product_faqs = product.productFaqs ?? null;
+  if (product.title !== undefined) data.title = product.title;
+  if (product.slug !== undefined) data.slug = product.slug;
+  if (product.description !== undefined) data.description = product.description;
+  if (product.subject !== undefined) data.subject = product.subject;
+  if (product.level !== undefined) data.level = product.level;
+  if (product.examCode !== undefined) data.exam_code = product.examCode;
+  if (product.type !== undefined) data.type = product.type;
+  if (product.price !== undefined) data.price = product.price;
+  if (product.originalPrice !== undefined) data.original_price = product.originalPrice ?? null;
+  if (product.rating !== undefined) data.rating = product.rating;
+  if (product.reviewCount !== undefined) data.review_count = product.reviewCount;
+  if (product.pages !== undefined) data.pages = product.pages;
+  if (product.downloads !== undefined) data.downloads = product.downloads;
+  if (product.cover !== undefined) data.cover = product.cover;
+  if (product.bestseller !== undefined) data.bestseller = product.bestseller;
+  if (product.published !== undefined) data.published = product.published;
+  if (product.featured !== undefined) data.featured = product.featured;
+  if (product.tags !== undefined) data.tags = product.tags;
+  if (product.author !== undefined) data.author = product.author;
+  if (product.updatedAt !== undefined) data.updated_at = product.updatedAt;
+  if (product.createdAt !== undefined) data.created_at = product.createdAt;
+  if (product.examBoard !== undefined) data.exam_board = product.examBoard ?? null;
+  if (product.session !== undefined) data.session = product.session ?? null;
+  if (product.paper !== undefined) data.paper = product.paper ?? null;
+  if (product.variant !== undefined) data.variant = product.variant ?? null;
+  if (product.language !== undefined) data.language = product.language;
+  if (product.format !== undefined) data.format = product.format;
+  if (product.version !== undefined) data.version = product.version ?? null;
+  if (product.thumbnail !== undefined) data.thumbnail = product.thumbnail ?? null;
+  if (product.previewImages !== undefined) data.preview_images = product.previewImages ?? [];
+  if (product.pdfUrl !== undefined) data.pdf_path = product.pdfUrl ?? null;
+  if (product.longDescription !== undefined) data.long_description = product.longDescription ?? null;
+  if (product.whatsIncluded !== undefined) data.whats_included = product.whatsIncluded ?? null;
+  if (product.syllabusCoverage !== undefined) data.syllabus_coverage = product.syllabusCoverage ?? null;
+  if (product.ratingDistribution !== undefined) data.rating_distribution = product.ratingDistribution ?? null;
+  if (product.reviews !== undefined) data.reviews = product.reviews ?? null;
+  if (product.productFaqs !== undefined) data.product_faqs = product.productFaqs ?? null;
   return data;
 }
 
@@ -146,7 +156,10 @@ export async function fetchProducts(): Promise<Product[]> {
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    console.error("fetchProducts error:", JSON.stringify(error, Object.keys(error)));
+    throw error;
+  }
   return (data ?? []).map(toCamelCase);
 }
 
@@ -194,34 +207,85 @@ export async function deleteProductById(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function uploadThumbnail(file: File, path: string): Promise<string> {
+/** Upload a file to Supabase storage via the client SDK.
+ *  Returns the storage path only. */
+export async function uploadToStorage(
+  file: File,
+  path: string,
+  bucket: string,
+): Promise<string> {
   const supabase = createClient();
   const { error } = await supabase.storage
-    .from("thumbnails")
+    .from(bucket)
     .upload(path, file, { upsert: true });
 
   if (error) throw error;
-
-  const { data: urlData } = supabase.storage
-    .from("thumbnails")
-    .getPublicUrl(path);
-
-  return urlData.publicUrl;
+  return path;
 }
 
+/** Upload a thumbnail to resource-thumbnails bucket. */
+export async function uploadThumbnail(file: File, path: string): Promise<string> {
+  return uploadToStorage(file, path, THUMBNAIL_BUCKET);
+}
+
+/** Upload a preview image to product-previews bucket. */
+export async function uploadPreviewImage(file: File, path: string): Promise<string> {
+  return uploadToStorage(file, path, PREVIEW_BUCKET);
+}
+
+/** Delete a preview image from product-previews bucket. */
+export async function deletePreviewImage(path: string): Promise<void> {
+  return deleteStorageFile(path, PREVIEW_BUCKET);
+}
+
+/** Upload a PDF to resource-pdfs bucket. */
 export async function uploadResource(file: File, path: string): Promise<string> {
+  return uploadToStorage(file, path, PDF_BUCKET);
+}
+
+/** Delete a file from a storage bucket. */
+export async function deleteStorageFile(path: string, bucket: string): Promise<void> {
   const supabase = createClient();
   const { error } = await supabase.storage
-    .from("resources")
-    .upload(path, file, { upsert: true });
+    .from(bucket)
+    .remove([path]);
 
   if (error) throw error;
+}
 
-  const { data: urlData } = supabase.storage
-    .from("resources")
-    .getPublicUrl(path);
+/** Safely resolve a thumbnail to a public URL.
+ *  Handles both old-style full URLs and new-style storage paths. */
+export function resolveThumbnailUrl(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const supabase = createClient();
+  const { data } = supabase.storage
+    .from(THUMBNAIL_BUCKET)
+    .getPublicUrl(value);
+  return data.publicUrl;
+}
 
-  return urlData.publicUrl;
+/** Safely resolve a preview image to a public URL.
+ *  Handles both old-style full URLs and new-style storage paths. */
+export function resolvePreviewUrl(value: string | undefined | null): string | undefined {
+  if (!value) return undefined;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const supabase = createClient();
+  const { data } = supabase.storage
+    .from(PREVIEW_BUCKET)
+    .getPublicUrl(value);
+  return data.publicUrl;
+}
+
+/** Generate a signed URL for a private PDF file. */
+export async function getSignedUrl(path: string, expiresIn = 3600): Promise<string> {
+  const supabase = createClient();
+  const { data, error } = await supabase.storage
+    .from(PDF_BUCKET)
+    .createSignedUrl(path, expiresIn);
+
+  if (error) throw error;
+  return data.signedUrl;
 }
 
 export { toSnakeCase };

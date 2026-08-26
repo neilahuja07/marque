@@ -34,11 +34,13 @@ function sortProducts(items: Product[], sort: string) {
 export default function BrowsePage() {
   const searchParams = useSearchParams();
   const initialSubject = searchParams.get("subject") || undefined;
+  const initialGrade = searchParams.get("grade") || undefined;
 
   const { products } = useProducts();
   const [filters, setFilters] = useState<FilterState>(() => ({
     ...defaultFilters,
     subjects: initialSubject ? [initialSubject] : [],
+    levels: initialGrade ? [initialGrade] : [],
   }));
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -129,7 +131,7 @@ export default function BrowsePage() {
             {/* Desktop sidebar */}
             <div className="hidden w-56 shrink-0 md:block">
               <div className="sticky top-24 rounded-[var(--radius-card)] border border-ink/[0.06] bg-warm-gray/40 p-5">
-                <FilterSidebar onFilterChange={handleFilterChange} initialSubject={initialSubject} />
+                <FilterSidebar onFilterChange={handleFilterChange} initialSubject={initialSubject} initialGrade={initialGrade} />
               </div>
             </div>
 
@@ -178,6 +180,8 @@ export default function BrowsePage() {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         onFilterChange={handleFilterChange}
+        initialSubject={initialSubject}
+        initialGrade={initialGrade}
       />
     </>
   );

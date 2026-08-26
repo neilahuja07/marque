@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Downloads — Marque",
+  title: "Downloads — Scholar Stack",
   description: "Access your downloaded resources.",
   openGraph: {
-    title: "Downloads — Marque",
+    title: "Downloads — Scholar Stack",
     description: "Access your downloaded resources.",
     type: "website",
   },

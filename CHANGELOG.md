@@ -1,4 +1,4 @@
-# CHANGELOG.md — Marque Digital Marketplace
+# CHANGELOG.md — Scholar Stack Digital Marketplace
 
 ---
 

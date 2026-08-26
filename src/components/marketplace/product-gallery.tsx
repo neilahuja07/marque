@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { resolveThumbnailUrl, resolvePreviewUrl } from "@/lib/supabase/products";
 
 interface ProductGalleryProps {
   cover: string;
   title: string;
   type: string;
+  thumbnail?: string;
+  previewImages?: string[];
 }
 
 const typeIcon: Record<string, React.ReactNode> = {
@@ -23,53 +26,74 @@ const typeIcon: Record<string, React.ReactNode> = {
   ),
 };
 
-export function ProductGallery({ cover, title, type }: ProductGalleryProps) {
+export function ProductGallery({ cover, title, type, thumbnail, previewImages }: ProductGalleryProps) {
   const [active, setActive] = useState(0);
 
-  const thumbnails = [
-    { label: "Cover", gradient: cover },
-    { label: "Page 1", gradient: "from-ink/80 to-teal-dark/80" },
-    { label: "Page 2", gradient: "from-teal-dark/80 to-sage/80" },
-    { label: "Page 3", gradient: "from-sage/80 to-brass/80" },
-  ];
+  // Build the image list: up to 4 preview images, falling back to the single thumbnail.
+  const resolvedThumbnail = thumbnail ? resolveThumbnailUrl(thumbnail) : null;
+
+  let images: { url: string; label: string }[] = [];
+  const previews = (previewImages || []).filter((p) => typeof p === "string" && p.length > 0).slice(0, 4);
+  if (previews.length > 0) {
+    images = previews.map((p, i) => ({ url: resolvePreviewUrl(p) || p, label: `Image ${i + 1}` }));
+  } else if (resolvedThumbnail) {
+    images = [{ url: resolvedThumbnail, label: "Preview" }];
+  }
+
+  const hasGallery = images.length > 1;
+  const activeUrl = images[active]?.url;
 
   return (
     <div className="flex flex-col gap-3">
       {/* Main image */}
-      <div className={`relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br ${thumbnails[active].gradient} border border-ink/10`}>
+      <div className={`relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br ${cover} border border-ink/10`}>
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
-        <div className="relative flex flex-col items-center gap-4 text-white">
-          <svg viewBox="0 0 24 24" className="h-20 w-20 text-white/30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-            {typeIcon[type] || typeIcon["Past Paper"]}
-          </svg>
-          <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-medium backdrop-blur-sm">
-            Preview
-          </span>
-        </div>
+        {activeUrl ? (
+          <img
+            src={activeUrl}
+            alt={title}
+            className="absolute inset-0 h-full w-full object-cover"
+            loading={active === 0 ? "eager" : "lazy"}
+          />
+        ) : (
+          <div className="relative flex flex-col items-center gap-4 text-white">
+            <svg viewBox="0 0 24 24" className="h-20 w-20 text-white/30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+              {typeIcon[type] || typeIcon["Past Paper"]}
+            </svg>
+            <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-medium backdrop-blur-sm">
+              Preview
+            </span>
+          </div>
+        )}
         <span className="absolute left-4 top-4 rounded-[4px] bg-white/95 px-2.5 py-1 text-[11px] font-medium text-ink">
           {type}
         </span>
       </div>
 
-      {/* Thumbnails */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {thumbnails.map((thumb, i) => (
-          <button
-            key={i}
-            onClick={() => setActive(i)}
-            className={`relative h-16 w-20 overflow-hidden rounded-[8px] border-2 transition-all duration-200 ${
-              i === active
-                ? "border-teal-dark"
-                : "border-ink/10 opacity-60 hover:opacity-100"
-            }`}
-          >
-            <div className={`absolute inset-0 bg-gradient-to-br ${thumb.gradient}`} />
-            <span className="absolute bottom-1 left-1.5 text-[9px] font-medium text-white/80">
-              {thumb.label}
-            </span>
-          </button>
-        ))}
-      </div>
+      {/* Thumbnails (only when more than one image exists) */}
+      {hasGallery && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              aria-label={img.label}
+              className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-[8px] border-2 transition-all duration-200 ${
+                i === active
+                  ? "border-teal-dark"
+                  : "border-ink/10 opacity-60 hover:opacity-100"
+              }`}
+            >
+              <img
+                src={img.url}
+                alt={img.label}
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

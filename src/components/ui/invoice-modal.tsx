@@ -10,7 +10,7 @@ interface InvoiceModalProps {
   sellerName?: string;
 }
 
-export function InvoiceModal({ isOpen, onClose, order, sellerName = "Marque Education Ltd" }: InvoiceModalProps) {
+export function InvoiceModal({ isOpen, onClose, order, sellerName = "Scholar Stack Education Ltd" }: InvoiceModalProps) {
   if (!order) return null;
 
   return (
@@ -19,7 +19,7 @@ export function InvoiceModal({ isOpen, onClose, order, sellerName = "Marque Educ
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <p className="font-display text-[18px] font-semibold text-ink">Marque</p>
+            <p className="font-display text-[18px] font-semibold text-ink">Scholar Stack</p>
             <p className="mt-1 text-[12px] text-slate">{sellerName}</p>
           </div>
           <div className="text-right">

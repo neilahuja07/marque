@@ -14,6 +14,7 @@ import {
   insertProduct,
   updateProductById,
   deleteProductById,
+  deleteStorageFile,
   toSnakeCase,
 } from "@/lib/supabase/products";
 
@@ -29,7 +30,7 @@ interface ProductStore {
   loading: boolean;
   getProductBySlug: (slug: string) => Product | undefined;
   getProductById: (id: string) => Product | undefined;
-  addProduct: (data: Omit<Product, "id" | "slug" | "rating" | "reviewCount" | "downloads">) => Promise<Product>;
+  addProduct: (data: Omit<Product, "id" | "slug" | "rating" | "reviewCount" | "downloads"> & { id?: string }) => Promise<Product>;
   updateProduct: (id: string, updates: Partial<Product>) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   togglePublish: (id: string) => Promise<void>;
@@ -45,7 +46,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     fetchProducts()
       .then(setProducts)
-      .catch(console.error)
+      .catch((e) => console.error("ProductProvider error:", e?.message, e))
       .finally(() => setLoading(false));
   }, []);
 
@@ -60,7 +61,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   );
 
   const addProduct = useCallback(
-    async (data: Omit<Product, "id" | "slug" | "rating" | "reviewCount" | "downloads">) => {
+    async (data: Omit<Product, "id" | "slug" | "rating" | "reviewCount" | "downloads"> & { id?: string }) => {
       let slug = slugify(data.title);
       const existingSlugs = products.map((p) => p.slug);
       if (existingSlugs.includes(slug)) {
@@ -75,6 +76,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         downloads: 0,
       });
 
+      if (data.id) dbData.id = data.id;
       dbData.created_at = new Date().toISOString();
       dbData.updated_at = new Date().toISOString();
 
@@ -110,9 +112,21 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const deleteProduct = useCallback(async (id: string) => {
+    const product = products.find((p) => p.id === id);
+    if (product?.thumbnail) {
+      deleteStorageFile(product.thumbnail, "resource-thumbnails").catch(() => {});
+    }
+    if (product?.previewImages && product.previewImages.length > 0) {
+      product.previewImages.forEach((path) => {
+        deleteStorageFile(path, "product-previews").catch(() => {});
+      });
+    }
+    if (product?.pdfUrl) {
+      deleteStorageFile(product.pdfUrl, "resource-pdfs").catch(() => {});
+    }
     await deleteProductById(id);
     setProducts((prev) => prev.filter((p) => p.id !== id));
-  }, []);
+  }, [products]);
 
   const togglePublish = useCallback(async (id: string) => {
     const product = products.find((p) => p.id === id);

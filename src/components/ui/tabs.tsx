@@ -41,7 +41,7 @@ export function TabsList({ children, className = "" }: TabsListProps) {
   return (
     <div
       role="tablist"
-      className={`flex items-center gap-1 border-b border-ink/10 ${className}`}
+      className={`flex items-center gap-1 overflow-x-auto border-b border-ink/10 scrollbar-none ${className}`}
     >
       {children}
     </div>

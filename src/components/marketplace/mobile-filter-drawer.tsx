@@ -7,9 +7,11 @@ interface MobileFilterDrawerProps {
   open: boolean;
   onClose: () => void;
   onFilterChange?: (filters: FilterState) => void;
+  initialSubject?: string;
+  initialGrade?: string;
 }
 
-export function MobileFilterDrawer({ open, onClose, onFilterChange }: MobileFilterDrawerProps) {
+export function MobileFilterDrawer({ open, onClose, onFilterChange, initialSubject, initialGrade }: MobileFilterDrawerProps) {
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -41,7 +43,7 @@ export function MobileFilterDrawer({ open, onClose, onFilterChange }: MobileFilt
           </button>
         </div>
         <div className="px-6 py-6">
-          <FilterSidebar onFilterChange={onFilterChange} />
+          <FilterSidebar onFilterChange={onFilterChange} initialSubject={initialSubject} initialGrade={initialGrade} />
         </div>
       </div>
     </div>

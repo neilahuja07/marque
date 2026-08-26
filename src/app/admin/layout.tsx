@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin — Marque",
-  description: "Marque admin dashboard.",
+  title: "Admin — Scholar Stack",
+  description: "Scholar Stack admin dashboard.",
   openGraph: {
-    title: "Admin — Marque",
-    description: "Marque admin dashboard.",
+    title: "Admin — Scholar Stack",
+    description: "Scholar Stack admin dashboard.",
     type: "website",
   },
 };

@@ -27,7 +27,7 @@ interface CartStore {
 
 const CartContext = createContext<CartStore | null>(null);
 
-const STORAGE_KEY = "marque-cart";
+const STORAGE_KEY = "scholar-stack-cart";
 
 function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];

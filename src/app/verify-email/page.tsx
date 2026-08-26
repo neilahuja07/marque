@@ -13,7 +13,7 @@ export default function VerifyEmailPage() {
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
-    const email = sessionStorage.getItem("marque_signup_email");
+    const email = sessionStorage.getItem("scholar-stack_signup_email");
     if (email) {
       setUserEmail(email);
     } else {
@@ -78,7 +78,7 @@ export default function VerifyEmailPage() {
               <ol className="space-y-3 text-[13px] text-slate">
                 <li className="flex items-start gap-3">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-dark text-[10px] font-bold text-white">1</span>
-                  Open the email from Marque
+                  Open the email from Scholar Stack
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-dark text-[10px] font-bold text-white">2</span>

@@ -6,8 +6,6 @@ import {
   Hero,
   CategoryCard,
   ResourceCard,
-  Testimonials,
-  CTA,
   Footer,
 } from "@/components/marketplace";
 import { useProducts } from "@/lib/product-store";
@@ -36,12 +34,16 @@ export default function HomePage() {
             <div>
               <p className="exam-code text-[12px] text-brass">By subject</p>
               <h2 className="mt-2 font-display text-[30px] text-ink">
-                Three subjects, done properly
+                Quality resources. Clear preparation.
               </h2>
             </div>
             <div className="mt-10 grid gap-6 md:grid-cols-3">
               {dynamicCategories.map((c) => (
-                <CategoryCard key={c.slug} {...c} />
+                <CategoryCard
+                  key={c.slug}
+                  {...c}
+                  comingSoon={c.slug !== "science"}
+                />
               ))}
             </div>
           </section>
@@ -75,12 +77,6 @@ export default function HomePage() {
         </FadeIn>
 
       </main>
-
-      <CTA />
-
-      <FadeIn delay={80}>
-        <Testimonials />
-      </FadeIn>
 
       <Footer />
     </>

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Profile — Marque",
-  description: "Manage your Marque profile.",
+  title: "Profile — Scholar Stack",
+  description: "Manage your Scholar Stack profile.",
   openGraph: {
-    title: "Profile — Marque",
-    description: "Manage your Marque profile.",
+    title: "Profile — Scholar Stack",
+    description: "Manage your Scholar Stack profile.",
     type: "website",
   },
 };

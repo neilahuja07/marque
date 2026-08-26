@@ -3,11 +3,11 @@ import { Navbar, Footer } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Marque",
-  description: "Marque's privacy policy. Learn how we collect, use and protect your personal information.",
+  title: "Privacy Policy — Scholar Stack",
+  description: "Scholar Stack's privacy policy. Learn how we collect, use and protect your personal information.",
   openGraph: {
-    title: "Privacy Policy — Marque",
-    description: "Marque's privacy policy. Learn how we collect, use and protect your personal information.",
+    title: "Privacy Policy — Scholar Stack",
+    description: "Scholar Stack's privacy policy. Learn how we collect, use and protect your personal information.",
     type: "website",
   },
 };
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
               <section>
                 <h2 className="font-display text-[18px] text-ink">1. Information we collect</h2>
                 <p className="mt-3">
-                  When you use Marque, we collect information you provide directly: your name, email address, and payment information when you make a purchase. We also collect usage data such as pages visited, resources downloaded, and browsing behaviour to improve our service.
+                  When you use Scholar Stack, we collect information you provide directly: your name, email address, and payment information when you make a purchase. We also collect usage data such as pages visited, resources downloaded, and browsing behaviour to improve our service.
                 </p>
               </section>
 
@@ -62,14 +62,14 @@ export default function PrivacyPage() {
               <section>
                 <h2 className="font-display text-[18px] text-ink">6. Your rights</h2>
                 <p className="mt-3">
-                  You have the right to access, correct, or delete your personal data. You may also request a copy of all data we hold about you. To exercise these rights, please contact us at privacy@marque.com.
+                  You have the right to access, correct, or delete your personal data. You may also request a copy of all data we hold about you. To exercise these rights, please contact us at privacy@scholarstack.com.
                 </p>
               </section>
 
               <section>
                 <h2 className="font-display text-[18px] text-ink">7. Contact</h2>
                 <p className="mt-3">
-                  If you have questions about this privacy policy, please contact us at privacy@marque.com.
+                  If you have questions about this privacy policy, please contact us at privacy@scholarstack.com.
                 </p>
               </section>
             </div>

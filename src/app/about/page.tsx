@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Navbar, Footer, Statistics, Testimonials } from "@/components/marketplace";
+import { Navbar, Footer } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
 
 export const metadata: Metadata = {
-  title: "About — Marque",
-  description: "Learn about Marque's mission to provide premium Cambridge IGCSE, O Level and A Level study resources.",
+  title: "About — Scholar Stack",
+  description: "Learn about Scholar Stack's mission to provide premium Grade 4–8 study resources.",
   openGraph: {
-    title: "About — Marque",
-    description: "Learn about Marque's mission to provide premium Cambridge IGCSE, O Level and A Level study resources.",
+    title: "About — Scholar Stack",
+    description: "Learn about Scholar Stack's mission to provide premium Grade 4–8 study resources.",
     type: "website",
   },
 };
@@ -22,12 +22,12 @@ export default function AboutPage() {
         <section className="border-b border-ink/10 bg-white">
           <div className="mx-auto max-w-3xl px-6 py-20 text-center">
             <FadeIn>
-              <p className="text-[12px] uppercase tracking-[0.15em] text-brass font-medium">About Marque</p>
+              <p className="text-[12px] uppercase tracking-[0.15em] text-brass font-medium">About Scholar Stack</p>
               <h1 className="mt-4 font-display text-[32px] leading-tight text-ink md:text-[40px]">
                 Premium study resources for ambitious students
               </h1>
               <p className="mt-5 text-[15px] leading-relaxed text-slate max-w-2xl mx-auto">
-                Marque was founded to help Cambridge IGCSE, O Level and A Level students access the highest-quality study materials — curated, verified, and designed to make revision genuinely effective.
+                Scholar Stack was founded to help Grade 4–8 students access the highest-quality study materials — curated, verified, and designed to make revision genuinely effective.
               </p>
             </FadeIn>
           </div>
@@ -50,7 +50,7 @@ export default function AboutPage() {
                   We believe every student deserves access to excellent study materials, regardless of where they are in the world. Our resources are created by experienced educators and examiners who understand what it takes to succeed.
                 </p>
                 <p className="mt-3 text-[14px] leading-relaxed text-slate">
-                  Every resource on Marque is carefully vetted for accuracy, relevance, and quality before it reaches your hands.
+                  Every resource on Scholar Stack is carefully vetted for accuracy, relevance, and quality before it reaches your hands.
                 </p>
               </div>
             </FadeIn>
@@ -95,18 +95,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Stats */}
-        <Statistics />
-
-        {/* Testimonials */}
-        <Testimonials />
-
         {/* CTA */}
         <section className="bg-teal-dark">
           <div className="mx-auto max-w-3xl px-6 py-16 text-center">
             <FadeIn>
               <h2 className="font-display text-[24px] text-white">Start exploring resources today</h2>
-              <p className="mt-3 text-[14px] text-white/70">Join thousands of students preparing for their exams with Marque.</p>
+              <p className="mt-3 text-[14px] text-white/70">Join thousands of students preparing for their exams with Scholar Stack.</p>
               <a href="/browse" className="mt-6 inline-flex rounded-[8px] bg-white px-6 py-3 text-[14px] font-medium text-teal-dark transition-all hover:shadow-lg hover:translate-y-[-1px]">
                 Browse resources
               </a>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { PreloaderProvider } from "@/components/ui/preloader-provider";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -22,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Marque — Study Material Marked to the Syllabus",
+  title: "Scholar Stack — Study Material Marked to the Syllabus",
   description:
     "Past papers, mock tests, worksheets and revision notes for Cambridge Mathematics, Science and English.",
 };
@@ -44,7 +45,9 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <Providers>{children}</Providers>
+        <Providers>
+          <PreloaderProvider>{children}</PreloaderProvider>
+        </Providers>
       </body>
     </html>
   );

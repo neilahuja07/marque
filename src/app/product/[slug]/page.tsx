@@ -12,10 +12,6 @@ import { ProductGallery } from "@/components/marketplace/product-gallery";
 import { WhatsIncluded } from "@/components/marketplace/whats-included";
 import { SyllabusCoverage } from "@/components/marketplace/syllabus-coverage";
 import { ResourceInfo } from "@/components/marketplace/resource-info";
-import { SamplePages } from "@/components/marketplace/sample-pages";
-import { ReviewsSection } from "@/components/marketplace/reviews-section";
-import { ProductFAQ } from "@/components/marketplace/product-faq";
-import { RatingStars } from "@/components/marketplace/rating-stars";
 import { ExamCodeBadge } from "@/components/marketplace/exam-code-badge";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -51,26 +47,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     { label: "Pages", value: String(product.pages) },
     { label: "Format", value: product.format || "PDF" },
     { label: "Language", value: product.language || "English" },
-    { label: "Exam Board", value: product.examBoard || "Cambridge" },
     { label: "Subject", value: product.subject },
-    { label: "Level", value: product.level },
-    { label: "Version", value: product.version || "1.0" },
-    { label: "Updated", value: product.updatedAt },
-    { label: "Downloads", value: product.downloads.toLocaleString() },
-  ];
-
-  const defaultDistribution = [
-    { stars: 5, count: Math.floor(product.reviewCount * 0.82) },
-    { stars: 4, count: Math.floor(product.reviewCount * 0.12) },
-    { stars: 3, count: Math.floor(product.reviewCount * 0.04) },
-    { stars: 2, count: Math.floor(product.reviewCount * 0.015) },
-    { stars: 1, count: Math.max(1, Math.floor(product.reviewCount * 0.005)) },
-  ];
-
-  const defaultReviews = [
-    { name: "Student", role: "IGCSE Candidate", rating: 5, date: "2025-06-01", text: "Excellent resource. The worked solutions are clear and easy to follow." },
-    { name: "Parent", role: "London, UK", rating: 5, date: "2025-05-28", text: "Very helpful for my child's revision. Highly recommended." },
-    { name: "Tutor", role: "Dubai, UAE", rating: 4, date: "2025-05-22", text: "Good quality material. I use this with several of my students." },
+    { label: "Grade", value: product.level },
   ];
 
   return (
@@ -101,6 +79,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 cover={product.cover}
                 title={product.title}
                 type={product.type}
+                thumbnail={product.thumbnail}
+                previewImages={product.previewImages}
               />
             </FadeIn>
 
@@ -108,7 +88,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             <FadeIn delay={100}>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <ExamCodeBadge code={product.examCode} />
+                  {product.examCode && <ExamCodeBadge code={product.examCode} />}
                   {product.bestseller && (
                     <span className="rounded-full bg-brass/15 px-2.5 py-0.5 text-[11px] font-medium text-brass">
                       Bestseller
@@ -134,26 +114,22 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   )}
                 </div>
 
-                <div className="mt-4 flex items-center gap-4">
-                  <RatingStars rating={product.rating} count={product.reviewCount} />
-                  <span className="text-[12px] text-slate">
-                    {product.downloads.toLocaleString()} downloads
-                  </span>
-                </div>
 
-                <p className="mt-4 text-[14px] leading-relaxed text-slate">
-                  {product.description}
-                </p>
+                {product.description && (
+                  <p className="mt-4 text-[14px] leading-relaxed text-slate">
+                    {product.description}
+                  </p>
+                )}
 
                 {/* Price */}
                 <div className="mt-6 flex items-baseline gap-3">
                   <span className="font-display text-[32px] text-ink">${product.price.toFixed(2)}</span>
-                  {product.originalPrice && (
+                  {product.originalPrice && product.originalPrice > product.price && (
                     <span className="text-[16px] text-slate line-through">
                       ${product.originalPrice.toFixed(2)}
                     </span>
                   )}
-                  {product.originalPrice && (
+                  {product.originalPrice && product.originalPrice > product.price && (
                     <span className="rounded-full bg-teal-dark/10 px-2.5 py-0.5 text-[11px] font-medium text-teal-dark">
                       Save ${(product.originalPrice - product.price).toFixed(2)}
                     </span>
@@ -183,20 +159,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                     className="btn-primary flex-1 rounded-[8px] bg-sage px-6 py-3 text-[15px] font-medium text-ink"
                   >
                     Buy now
-                  </button>
-                </div>
-
-                {/* Secondary actions */}
-                <div className="mt-4 flex items-center gap-2">
-                  <button className="flex items-center gap-2 rounded-[8px] py-2.5 px-3 text-[13px] text-slate transition-colors hover:text-ink">
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="18" cy="5" r="3" />
-                      <circle cx="6" cy="12" r="3" />
-                      <circle cx="18" cy="19" r="3" />
-                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                    </svg>
-                    Share
                   </button>
                 </div>
 
@@ -244,36 +206,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             </div>
           </section>
         </FadeIn>
-
-        {/* Sample pages */}
-        <FadeIn>
-          <section className="mx-auto max-w-7xl px-6 py-14">
-            <SamplePages />
-          </section>
-        </FadeIn>
-
-        {/* Reviews */}
-        <FadeIn>
-          <section className="border-t border-ink/10 bg-white">
-            <div className="mx-auto max-w-7xl px-6 py-14">
-              <ReviewsSection
-                rating={product.rating}
-                reviewCount={product.reviewCount}
-                distribution={product.ratingDistribution || defaultDistribution}
-                reviews={product.reviews || defaultReviews}
-              />
-            </div>
-          </section>
-        </FadeIn>
-
-        {/* Product FAQ */}
-        {product.productFaqs && (
-          <FadeIn>
-            <section className="mx-auto max-w-7xl px-6 py-14">
-              <ProductFAQ faqs={product.productFaqs} />
-            </section>
-          </FadeIn>
-        )}
 
         {/* Related resources */}
         {related.length > 0 && (

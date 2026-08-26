@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Navbar, Footer } from "@/components/marketplace";
 
 export const metadata: Metadata = {
-  title: "Page Not Found — Marque",
+  title: "Page Not Found — Scholar Stack",
   description: "The page you're looking for doesn't exist.",
 };
 

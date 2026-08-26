@@ -1,55 +1,54 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Navbar, Footer } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useCart, type CartItem } from "@/lib/cart-store";
 import { Breadcrumbs } from "@/components/marketplace/breadcrumbs";
 import { TrustSection } from "@/components/marketplace/trust-section";
-import { PaymentMethodSelector, type PaymentMethod } from "@/components/marketplace/payment-method-selector";
-import { OrderConfirmationModal } from "@/components/marketplace/order-confirmation-modal";
+import { useAuth } from "@/components/auth-provider";
+import { useToast } from "@/components/ui/toast";
+import { formatUsd } from "@/lib/currency";
 
-type FormData = {
-  email: string;
-  firstName: string;
-  lastName: string;
-  country: string;
-  city: string;
-  postalCode: string;
-  notes: string;
-};
+declare global {
+  interface Window {
+    Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
 
-const initialForm: FormData = {
-  email: "",
-  firstName: "",
-  lastName: "",
-  country: "",
-  city: "",
-  postalCode: "",
-  notes: "",
-};
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void;
+  prefill?: { name?: string; email?: string };
+  theme?: { color?: string };
+  modal?: { ondismiss?: () => void };
+}
 
-const countries = [
-  "India",
-  "United Kingdom",
-  "United States",
-  "Canada",
-  "Australia",
-  "Singapore",
-  "Malaysia",
-  "Nigeria",
-  "Kenya",
-  "South Africa",
-  "UAE",
-  "Other",
-];
+interface RazorpayInstance {
+  open: () => void;
+  on: (event: string, handler: (response: { error: { description?: string } }) => void) => void;
+}
+
+interface RazorpayResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const isBuyNow = searchParams.get("buyNow") === "true";
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
+  const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   const checkoutItems: CartItem[] = useMemo(() => {
     if (isBuyNow && items.length > 0) {
@@ -58,37 +57,144 @@ export default function CheckoutPage() {
     return items;
   }, [isBuyNow, items]);
 
-  const [form, setForm] = useState<FormData>(initialForm);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("upi");
-  const [showModal, setShowModal] = useState(false);
+  const [guestEmail, setGuestEmail] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const subtotal = checkoutItems.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0,
   );
-  const discount = checkoutItems.reduce((sum, item) => {
-    if (item.product.originalPrice)
-      return (
-        sum +
-        (item.product.originalPrice - item.product.price) * item.quantity
-      );
-    return sum;
-  }, 0);
-  const tax = Math.round(subtotal * 0.05 * 100) / 100;
-  const total = subtotal - discount + tax;
+  const total = subtotal;
 
-  const orderNumber = useMemo(
-    () => `MRQ-${Math.floor(10000 + Math.random() * 90000)}`,
-    [],
+  const displayItems: CartItem[] = mounted ? checkoutItems : [];
+
+  const displaySubtotal = displayItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
   );
+  const displayTotal = displaySubtotal;
 
-  const update = (field: keyof FormData, value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const isSignedIn = !!user;
+  const customerEmail = isSignedIn ? (user.email ?? "") : guestEmail;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowModal(true);
-  };
+
+    if (isProcessing) return;
+
+    if (!customerEmail) {
+      toast("Please enter your email address.", "error");
+      return;
+    }
+
+    if (checkoutItems.length === 0) {
+      toast("Your cart is empty.", "error");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const orderRes = await fetch("/api/razorpay/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: total,
+          receipt: `rcpt_${Date.now()}`,
+          notes: { email: customerEmail },
+        }),
+      });
+
+      const resText = await orderRes.text();
+      console.log("[Checkout] /api/razorpay/order response status:", orderRes.status);
+      console.log("[Checkout] /api/razorpay/order response body:", resText);
+
+      if (!orderRes.ok) {
+        throw new Error("Failed to create order");
+      }
+
+      const { orderId, amount, currency } = JSON.parse(resText);
+
+      const razorpayItems = checkoutItems.map((item) => ({
+        productId: item.product.id,
+        title: item.product.title,
+        price: item.product.price,
+        quantity: item.quantity,
+      }));
+
+      const options: RazorpayOptions = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        amount,
+        currency,
+        name: "Scholar Stack",
+        description: "Purchase from Scholar Stack",
+        order_id: orderId,
+        handler: async (response: RazorpayResponse) => {
+          try {
+            const verifyRes = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                items: razorpayItems,
+                email: customerEmail,
+              }),
+            });
+
+            if (!verifyRes.ok) {
+              throw new Error("Payment verification failed");
+            }
+
+            const { orderId: dbOrderId, paymentId } = await verifyRes.json();
+            clearCart();
+            router.push(
+              `/payment-success?orderId=${dbOrderId}&paymentId=${paymentId}`,
+            );
+          } catch {
+            toast(
+              "Payment was received but verification failed. Contact support.",
+              "error",
+            );
+          }
+        },
+        prefill: {
+          email: customerEmail,
+        },
+        theme: { color: "#1F4B43" },
+        modal: {
+          ondismiss: () => {
+            setIsProcessing(false);
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", () => {
+        toast("Payment failed. Please try again.", "error");
+        setIsProcessing(false);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error("[Checkout] Payment flow error:", err);
+      toast(err instanceof Error ? err.message : JSON.stringify(err), "error");
+      setIsProcessing(false);
+    }
+  }, [customerEmail, checkoutItems, total, isProcessing, toast, clearCart, router]);
 
   return (
     <>
@@ -118,151 +224,51 @@ export default function CheckoutPage() {
           </p>
         </section>
 
-        {/* Checkout form */}
+        {/* Checkout */}
         <section className="mx-auto max-w-7xl px-6 pb-32 pt-6 md:pb-16">
-          <form onSubmit={handleSubmit}>
+          <form id="checkout-form" onSubmit={handleSubmit}>
             <div className="grid gap-8 lg:grid-cols-[1fr_380px] lg:gap-10">
-              {/* Left: Form */}
+              {/* Left */}
               <div className="space-y-8">
-                {/* Section 1: Contact Information */}
+                {/* Purchasing as / Email */}
                 <FadeIn>
                   <div className="rounded-[10px] border border-ink/10 bg-white p-6">
-                    <h2 className="font-display text-[18px] text-ink">Contact information</h2>
-                    <div className="mt-5">
-                      <label className="block text-[13px] font-medium text-ink/70">
-                        Email <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={(e) => update("email", e.target.value)}
-                        className="input-field mt-1.5 w-full rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
-                        placeholder="you@example.com"
-                      />
-                      <p className="mt-1.5 text-[12px] text-slate">
-                        Download links will be sent to this email.
-                      </p>
-                    </div>
-                  </div>
-                </FadeIn>
-
-                {/* Section 2: Billing Details */}
-                <FadeIn delay={60}>
-                  <div className="rounded-[10px] border border-ink/10 bg-white p-6">
-                    <h2 className="font-display text-[18px] text-ink">Billing details</h2>
-                    <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="block text-[13px] font-medium text-ink/70">
-                          First name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={form.firstName}
-                          onChange={(e) => update("firstName", e.target.value)}
-                          className="input-field mt-1.5 w-full rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
-                          placeholder="Jane"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[13px] font-medium text-ink/70">
-                          Last name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={form.lastName}
-                          onChange={(e) => update("lastName", e.target.value)}
-                          className="input-field mt-1.5 w-full rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
-                          placeholder="Smith"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[13px] font-medium text-ink/70">
-                          Country <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          required
-                          value={form.country}
-                          onChange={(e) => update("country", e.target.value)}
-                          className="input-field mt-1.5 w-full appearance-none rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink"
+                    {isSignedIn ? (
+                      <>
+                        <h2 className="text-[13px] uppercase tracking-[0.1em] text-ink/60 font-medium">
+                          Purchasing as
+                        </h2>
+                        <a
+                          href={`mailto:${user.email}`}
+                          className="mt-2 inline-block text-[15px] font-medium text-teal-dark underline underline-offset-4 decoration-ink/20 hover:decoration-teal-dark transition-colors duration-200"
                         >
-                          <option value="">Select country</option>
-                          {countries.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-[13px] font-medium text-ink/70">
-                          City <span className="text-red-500">*</span>
-                        </label>
+                          {user.email}
+                        </a>
+                        <p className="mt-3 text-[13px] text-slate">
+                          Your digital resources will be delivered to your account and registered email.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h2 className="font-display text-[18px] text-ink">Email address</h2>
+                        <p className="mt-2 text-[13px] text-slate">
+                          Your digital resources will be delivered to this email.
+                        </p>
                         <input
-                          type="text"
+                          type="email"
                           required
-                          value={form.city}
-                          onChange={(e) => update("city", e.target.value)}
-                          className="input-field mt-1.5 w-full rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
-                          placeholder="Mumbai"
+                          value={guestEmail}
+                          onChange={(e) => setGuestEmail(e.target.value)}
+                          className="input-field mt-4 w-full max-w-md rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
+                          placeholder="you@example.com"
                         />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="block text-[13px] font-medium text-ink/70">
-                          Postal code
-                        </label>
-                        <input
-                          type="text"
-                          value={form.postalCode}
-                          onChange={(e) => update("postalCode", e.target.value)}
-                          className="input-field mt-1.5 w-full rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
-                          placeholder="400001"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </FadeIn>
-
-                {/* Section 3: Payment Method */}
-                <FadeIn delay={120}>
-                  <div className="rounded-[10px] border border-ink/10 bg-white p-6">
-                    <div className="flex items-center justify-between">
-                      <h2 className="font-display text-[18px] text-ink">Payment method</h2>
-                      <div className="flex items-center gap-1.5">
-                        <span className="rounded border border-ink/10 px-1.5 py-0.5 text-[10px] font-medium text-ink/50">VISA</span>
-                        <span className="rounded border border-ink/10 px-1.5 py-0.5 text-[10px] font-medium text-ink/50">MC</span>
-                        <span className="rounded border border-ink/10 px-1.5 py-0.5 text-[10px] font-medium text-ink/50">UPI</span>
-                      </div>
-                    </div>
-                    <p className="mt-1 text-[12px] text-slate">
-                      All transactions are secure and encrypted.
-                    </p>
-                    <div className="mt-5">
-                      <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} />
-                    </div>
-                    <p className="mt-4 text-[12px] text-ink/40">
-                      Powered by Razorpay. You will be redirected to complete payment after placing your order.
-                    </p>
-                  </div>
-                </FadeIn>
-
-                {/* Section 4: Order Notes */}
-                <FadeIn delay={180}>
-                  <div className="rounded-[10px] border border-ink/10 bg-white p-6">
-                    <h2 className="font-display text-[18px] text-ink">Order notes</h2>
-                    <p className="mt-1 text-[12px] text-slate">Optional — anything you'd like us to know.</p>
-                    <textarea
-                      rows={3}
-                      value={form.notes}
-                      onChange={(e) => update("notes", e.target.value)}
-                      className="input-field mt-4 w-full resize-none rounded-[8px] border border-ink/15 bg-parchment px-3.5 py-3 text-[14px] text-ink placeholder:text-ink/40"
-                      placeholder="e.g. Need resources for upcoming March/June exam session"
-                    />
+                      </>
+                    )}
                   </div>
                 </FadeIn>
 
                 {/* Back to Cart */}
-                <FadeIn delay={200}>
+                <FadeIn delay={60}>
                   <Link
                     href="/cart"
                     className="inline-flex items-center gap-2 text-[13px] font-medium text-slate transition-colors hover:text-ink"
@@ -276,15 +282,15 @@ export default function CheckoutPage() {
                 </FadeIn>
               </div>
 
-              {/* Right: Order Summary (desktop) */}
+              {/* Right: Order Summary */}
               <div className="hidden md:block">
-                <FadeIn delay={100}>
+                <FadeIn delay={80}>
                   <div className="sticky top-28 rounded-[10px] border border-ink/10 bg-white p-6">
                     <h2 className="text-[15px] font-medium text-ink">Order summary</h2>
 
                     {/* Items */}
                     <div className="mt-5 space-y-4">
-                      {checkoutItems.map((item) => (
+                      {displayItems.map((item) => (
                         <div key={item.product.id} className="flex items-start gap-3">
                           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[6px] bg-parchment">
                             <div className="flex h-full items-center justify-center">
@@ -301,7 +307,9 @@ export default function CheckoutPage() {
                             <p className="text-[13px] font-medium text-ink line-clamp-2">{item.product.title}</p>
                             <p className="mt-0.5 text-[12px] text-slate">{item.product.subject} · {item.product.level}</p>
                           </div>
-                          <p className="shrink-0 text-[13px] font-medium text-ink">${(item.product.price * item.quantity).toFixed(2)}</p>
+                          <p className="shrink-0 text-[13px] font-medium text-ink">
+                            {formatUsd(item.product.price * item.quantity)}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -310,22 +318,14 @@ export default function CheckoutPage() {
                     <div className="mt-6 space-y-2.5 border-t border-ink/10 pt-5">
                       <div className="flex justify-between text-[13px] text-ink/80">
                         <span>Subtotal</span>
-                        <span>${subtotal.toFixed(2)}</span>
-                      </div>
-                      {discount > 0 && (
-                        <div className="flex justify-between text-[13px] text-teal-dark">
-                          <span>Discount</span>
-                          <span>-${discount.toFixed(2)}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-[13px] text-ink/80">
-                        <span>Estimated tax</span>
-                        <span>${tax.toFixed(2)}</span>
+                        <span>{formatUsd(displaySubtotal)}</span>
                       </div>
                       <div className="border-t border-ink/10 pt-3">
                         <div className="flex justify-between text-[15px] font-medium text-ink">
                           <span>Total</span>
-                          <span className="font-display text-[18px]">${total.toFixed(2)}</span>
+                          <span className="font-display text-[18px]">
+                            {formatUsd(displayTotal)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -346,9 +346,10 @@ export default function CheckoutPage() {
                     {/* Submit */}
                     <button
                       type="submit"
-                      className="btn-primary mt-5 w-full rounded-[8px] bg-teal-dark px-6 py-3.5 text-[15px] font-medium text-white transition-all hover:bg-teal-dark/90"
+                      disabled={isProcessing || authLoading}
+                      className="btn-primary mt-5 w-full rounded-[8px] bg-teal-dark px-6 py-3.5 text-[15px] font-medium text-white transition-all hover:bg-teal-dark/90 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      Complete Purchase
+                      {isProcessing ? "Processing..." : "Complete Purchase"}
                     </button>
 
                     {/* Trust badge */}
@@ -369,15 +370,14 @@ export default function CheckoutPage() {
           </form>
         </section>
 
-        {/* Trust Section — full width */}
+        {/* Trust Section */}
         <section className="border-t border-ink/10 bg-white">
           <div className="mx-auto max-w-7xl px-6 py-12">
             <FadeIn>
-              <h2 className="font-display text-[20px] text-ink text-center">Why students trust Marque</h2>
+              <h2 className="font-display text-[20px] text-ink text-center">Why students trust Scholar Stack</h2>
               <div className="mt-6">
                 <TrustSection />
               </div>
-              {/* Extra trust items */}
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="flex items-center gap-3 text-[13px] text-ink/80">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-dark/8">
@@ -402,32 +402,26 @@ export default function CheckoutPage() {
       </main>
 
       {/* Mobile sticky CTA */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-white px-6 py-4 md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-white px-6 py-4 safe-bottom md:hidden">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-[12px] text-slate">Total</p>
-            <p className="font-display text-[20px] text-ink">${total.toFixed(2)}</p>
+            <p className="font-display text-[20px] text-ink">
+              {formatUsd(displayTotal)}
+            </p>
           </div>
           <button
             type="submit"
-            onClick={handleSubmit}
-            className="btn-primary rounded-[8px] bg-teal-dark px-6 py-3 text-[14px] font-medium text-white"
+            form="checkout-form"
+            disabled={isProcessing || authLoading}
+            className="btn-primary rounded-[8px] bg-teal-dark px-6 py-3 text-[14px] font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Complete Purchase
+            {isProcessing ? "Processing..." : "Complete Purchase"}
           </button>
         </div>
       </div>
 
       <Footer />
-
-      {/* Confirmation Modal */}
-      <OrderConfirmationModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        orderNumber={orderNumber}
-        email={form.email || "your email"}
-        total={total}
-      />
     </>
   );
 }

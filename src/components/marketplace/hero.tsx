@@ -2,7 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { HeroAuthForm } from "./hero-auth-form";
+import { WorksheetCarousel } from "./worksheet-carousel";
+
+const HERO_BIO =
+  "High-quality, specially curated Cambridge practice material designed to give students focused practice across their grade-level syllabus.";
+
+function HeroBio() {
+  return (
+    <p className="mt-5 max-w-md text-[16px] leading-relaxed text-slate">
+      {HERO_BIO}
+    </p>
+  );
+}
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -44,14 +55,10 @@ export function Hero() {
 
           <div className="relative">
             <h1 className="font-display text-[40px] leading-[1.1] text-ink md:text-[56px]">
-              Study material marked to the syllabus, not the{" "}
+              Study material built around the syllabus, not the{" "}
               <span className="text-brass">guess.</span>
             </h1>
-            <p className="mt-5 max-w-md text-[16px] leading-relaxed text-slate">
-              Past papers, mock tests, worksheets and revision notes for Cambridge
-              Mathematics, Science and English — every resource tagged to its exact
-              exam code and session.
-            </p>
+            <HeroBio />
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href="/browse"
@@ -60,10 +67,10 @@ export function Hero() {
                 Browse resources
               </Link>
               <Link
-                href="/browse"
+                href="/login"
                 className="btn-outline rounded-[8px] border border-ink/25 bg-transparent px-6 py-3 text-[15px] font-medium text-ink hover:bg-ink/5"
               >
-                View subjects
+                Sign in
               </Link>
             </div>
             <ul className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-2 border-l-2 border-brass/30 pl-5 text-[13px] text-slate">
@@ -89,8 +96,8 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="animate-fade-in-up">
-          <HeroAuthForm />
+        <div className="animate-fade-in-up flex items-center justify-center">
+          <WorksheetCarousel />
         </div>
       </div>
     </section>

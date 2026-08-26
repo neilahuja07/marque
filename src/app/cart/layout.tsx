@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Shopping Cart — Marque",
+  title: "Shopping Cart — Scholar Stack",
   description: "Review your selected resources before checkout.",
   openGraph: {
-    title: "Shopping Cart — Marque",
+    title: "Shopping Cart — Scholar Stack",
     description: "Review your selected resources before checkout.",
     type: "website",
   },

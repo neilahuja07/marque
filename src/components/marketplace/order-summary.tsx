@@ -5,13 +5,12 @@ import Link from "next/link";
 
 interface OrderSummaryProps {
   subtotal: number;
-  discount: number;
   tax: number;
 }
 
-export function OrderSummary({ subtotal, discount, tax }: OrderSummaryProps) {
+export function OrderSummary({ subtotal, tax }: OrderSummaryProps) {
   const [coupon, setCoupon] = useState("");
-  const total = subtotal - discount + tax;
+  const total = subtotal + tax;
 
   return (
     <div className="sticky top-24 rounded-[var(--radius-card)] border border-ink/10 bg-white p-5">
@@ -22,12 +21,6 @@ export function OrderSummary({ subtotal, discount, tax }: OrderSummaryProps) {
           <span>Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>
         </div>
-        {discount > 0 && (
-          <div className="flex justify-between text-teal-dark">
-            <span>Discount</span>
-            <span>-${discount.toFixed(2)}</span>
-          </div>
-        )}
         <div className="flex justify-between text-ink/80">
           <span>Estimated tax</span>
           <span>${tax.toFixed(2)}</span>

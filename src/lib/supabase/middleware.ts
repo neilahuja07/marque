@@ -44,7 +44,10 @@ export async function updateSession(request: NextRequest) {
   const isPublicPage =
     publicPages.includes(pathname) || pathname.startsWith("/product/");
 
-  if (!user && !isPublicPage) {
+  const isApiRoute = pathname.startsWith("/api/");
+
+  if (!user && !isPublicPage && !isApiRoute) {
+    console.log(`[Middleware] Redirecting unauthenticated request: ${pathname} -> /login`);
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
@@ -67,7 +70,7 @@ export async function updateSession(request: NextRequest) {
       ],
       admin: [
         "/admin", "/admin/users", "/admin/resources", "/admin/orders",
-        "/admin/categories", "/admin/reviews", "/admin/analytics",
+        "/admin/categories", "/admin/analytics",
         "/admin/settings",
       ],
     };
@@ -86,7 +89,7 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (!isPublicPage && !allowedRoutes.includes(pathname)) {
+    if (!isPublicPage && !isApiRoute && !allowedRoutes.includes(pathname)) {
       const url = request.nextUrl.clone();
       url.pathname = role === "admin" ? "/admin" : "/dashboard";
       return NextResponse.redirect(url);

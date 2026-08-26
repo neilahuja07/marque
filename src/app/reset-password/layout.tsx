@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Reset Password — Marque",
-  description: "Set a new password for your Marque account.",
+  title: "Reset Password — Scholar Stack",
+  description: "Set a new password for your Scholar Stack account.",
   openGraph: {
-    title: "Reset Password — Marque",
-    description: "Set a new password for your Marque account.",
+    title: "Reset Password — Scholar Stack",
+    description: "Set a new password for your Scholar Stack account.",
     type: "website",
   },
 };

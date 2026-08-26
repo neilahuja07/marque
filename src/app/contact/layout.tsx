@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact Us — Marque",
-  description: "Get in touch with the Marque team.",
+  title: "Contact Us — Scholar Stack",
+  description: "Need help with Scholar Stack? Reach us for order support, mass subscriptions, and feedback.",
   openGraph: {
-    title: "Contact Us — Marque",
-    description: "Get in touch with the Marque team.",
+    title: "Contact Us — Scholar Stack",
+    description: "Need help with Scholar Stack? Reach us for order support, mass subscriptions, and feedback.",
     type: "website",
   },
 };

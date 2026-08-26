@@ -138,7 +138,7 @@ export default function RegisterPage() {
       return;
     }
 
-    sessionStorage.setItem("marque_signup_email", form.email);
+    sessionStorage.setItem("scholar-stack_signup_email", form.email);
     router.push("/verify-email");
   };
 

@@ -3,8 +3,5 @@ export { Hero } from "./hero";
 export { Statistics } from "./statistics";
 export { CategoryCard } from "./category-card";
 export { ResourceCard } from "./resource-card";
-export { Testimonials } from "./testimonials";
-export { CTA } from "./cta";
 export { Footer } from "./footer";
 export { ExamCodeBadge } from "./exam-code-badge";
-export { RatingStars } from "./rating-stars";

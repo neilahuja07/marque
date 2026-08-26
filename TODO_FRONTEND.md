@@ -1,4 +1,4 @@
-# TODO_FRONTEND.md — Marque Digital Marketplace
+# TODO_FRONTEND.md — Scholar Stack Digital Marketplace
 
 > Frontend feature checklist. All routes, components, and features.
 > Last updated: July 2026

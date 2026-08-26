@@ -21,7 +21,7 @@ export default function FAQPage() {
                 Frequently asked questions
               </h1>
               <p className="mt-4 text-[15px] text-slate max-w-lg mx-auto">
-                Everything you need to know about Marque.
+                Everything you need to know about Scholar Stack.
               </p>
             </FadeIn>
           </div>

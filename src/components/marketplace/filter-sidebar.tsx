@@ -6,6 +6,7 @@ import { allSubjects, allLevels } from "@/lib/dummy-data";
 interface FilterSidebarProps {
   onFilterChange?: (filters: FilterState) => void;
   initialSubject?: string;
+  initialGrade?: string;
 }
 
 export interface FilterState {
@@ -57,10 +58,11 @@ function CheckboxItem({
   );
 }
 
-export function FilterSidebar({ onFilterChange, initialSubject }: FilterSidebarProps) {
+export function FilterSidebar({ onFilterChange, initialSubject, initialGrade }: FilterSidebarProps) {
   const [filters, setFilters] = useState<FilterState>(() => ({
     ...defaultFilters,
     subjects: initialSubject ? [initialSubject] : [],
+    levels: initialGrade ? [initialGrade] : [],
   }));
 
   const update = (partial: Partial<FilterState>) => {
@@ -107,9 +109,9 @@ export function FilterSidebar({ onFilterChange, initialSubject }: FilterSidebarP
           </div>
         </div>
 
-        {/* Qualification */}
+        {/* Grade */}
         <div>
-          <h4 className="text-[13px] font-medium text-ink">Qualification</h4>
+          <h4 className="text-[13px] font-medium text-ink">Grade</h4>
           <div className="mt-3 space-y-1">
             {allLevels.map((l) => (
               <CheckboxItem

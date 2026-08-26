@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -21,6 +21,15 @@ export function DashboardLayout({ children, sidebarItems, header }: DashboardLay
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.classList.add("menu-open");
+    } else {
+      document.body.classList.remove("menu-open");
+    }
+    return () => document.body.classList.remove("menu-open");
+  }, [mobileOpen]);
+
   return (
     <div className="flex min-h-screen bg-parchment">
       {/* Desktop sidebar */}
@@ -32,7 +41,7 @@ export function DashboardLayout({ children, sidebarItems, header }: DashboardLay
         {/* Logo */}
         <div className={`flex h-16 items-center border-b border-ink/10 ${collapsed ? "justify-center px-3" : "px-6"}`}>
           <Link href="/" className="font-display text-[20px] font-semibold tracking-tight text-ink">
-            {collapsed ? "M" : "Marque"}
+            {collapsed ? "SS" : "Scholar Stack"}
           </Link>
         </div>
 
@@ -90,7 +99,7 @@ export function DashboardLayout({ children, sidebarItems, header }: DashboardLay
           <aside className="fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col bg-white">
             <div className="flex h-16 items-center justify-between border-b border-ink/10 px-6">
               <Link href="/" className="font-display text-[20px] font-semibold tracking-tight text-ink">
-                Marque
+                Scholar Stack
               </Link>
               <button
                 onClick={() => setMobileOpen(false)}
@@ -143,7 +152,7 @@ export function DashboardLayout({ children, sidebarItems, header }: DashboardLay
             </svg>
           </button>
           <Link href="/" className="font-display text-[18px] font-semibold tracking-tight text-ink">
-            Marque
+            Scholar Stack
           </Link>
         </header>
 

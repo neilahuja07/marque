@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { useCart } from "@/lib/cart-store";
+import { MegaMenuDesktop, SubjectNavItem, subjects } from "./mega-menu";
 
 const navLinks = [
-  { label: "Browse", href: "/browse" },
   { label: "FAQ", href: "/faq" },
 ];
 
@@ -28,6 +28,15 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.classList.add("menu-open");
+    } else {
+      document.body.classList.remove("menu-open");
+    }
+    return () => document.body.classList.remove("menu-open");
+  }, [mobileOpen]);
+
   const dashboardHref = role === "admin" ? "/admin" : "/dashboard";
 
   return (
@@ -38,13 +47,16 @@ export function Navbar() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link href="/" className="flex items-baseline gap-1.5">
-          <span className="font-display text-[22px] font-medium text-ink">Marque</span>
+          <span className="font-display text-[22px] font-medium text-ink">Scholar Stack</span>
           <span className="exam-code hidden text-[11px] text-slate sm:inline">
-            CIE · IGCSE · A Level
+            CIE · Grade 4–8
           </span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex text-[14px] text-ink/80">
+          {subjects.map((subject) => (
+            <MegaMenuDesktop key={subject} subject={subject} />
+          ))}
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -144,11 +156,19 @@ export function Navbar() {
       {mobileOpen && (
         <div className="border-t border-ink/10 bg-parchment px-6 py-4 md:hidden">
           <nav className="flex flex-col gap-1 text-[14px] text-ink/80">
+            {subjects.map((subject) => (
+              <SubjectNavItem
+                key={subject}
+                subject={subject}
+                onClose={() => setMobileOpen(false)}
+              />
+            ))}
+
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="nav-link py-2.5"
+                className="nav-link py-2.5 min-h-[44px] flex items-center"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
@@ -157,7 +177,7 @@ export function Navbar() {
 
             <Link
               href={loading ? "/login" : dashboardHref}
-              className="nav-link py-2.5"
+              className="nav-link py-2.5 min-h-[44px] flex items-center"
               onClick={() => setMobileOpen(false)}
             >
               Dashboard
@@ -171,7 +191,7 @@ export function Navbar() {
                       setMobileOpen(false);
                       signOut();
                     }}
-                    className="nav-link py-2.5 text-left font-medium text-red-600"
+                    className="nav-link py-2.5 text-left font-medium text-red-600 min-h-[44px] flex items-center"
                   >
                     Sign Out
                   </button>
@@ -179,14 +199,14 @@ export function Navbar() {
                   <>
                     <Link
                       href="/login"
-                      className="nav-link py-2.5"
+                      className="nav-link py-2.5 min-h-[44px] flex items-center"
                       onClick={() => setMobileOpen(false)}
                     >
                       Sign In
                     </Link>
                     <Link
                       href="/register"
-                      className="nav-link py-2.5 font-medium text-teal-dark"
+                      className="nav-link py-2.5 font-medium text-teal-dark min-h-[44px] flex items-center"
                       onClick={() => setMobileOpen(false)}
                     >
                       Get Started

@@ -38,13 +38,46 @@ export function CategoryCard({
   slug,
   description,
   accent,
+  comingSoon = false,
 }: {
   name: string;
   slug: string;
   description: string;
   accent: string;
+  comingSoon?: boolean;
 }) {
   const t = themes[accent];
+
+  const content = (
+    <>
+      <div className={`absolute -right-8 -top-8 h-32 w-32 rounded-full ${t.iconWrap} opacity-40 blur-2xl`} />
+      <div className="relative">
+        <div>
+          <span className={`flex h-11 w-11 items-center justify-center rounded-[10px] ${t.iconWrap}`}>
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+              {t.icon}
+            </svg>
+          </span>
+        </div>
+        <h3 className="mt-6 font-display text-[23px] text-ink">{name}</h3>
+        <p className="mt-1.5 text-[14px] leading-relaxed text-slate">{description}</p>
+      </div>
+      <span className="relative mt-8 inline-flex items-center gap-1.5 text-[13px] font-medium text-ink/40">
+        Coming soon!
+      </span>
+    </>
+  );
+
+  if (comingSoon) {
+    return (
+      <div
+        className={`relative flex flex-col justify-between overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white p-7 opacity-70`}
+      >
+        {content}
+      </div>
+    );
+  }
+
   return (
     <Link
       href={`/browse?subject=${name}`}

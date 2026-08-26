@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import type { Product } from "@/lib/types";
 import { ExamCodeBadge } from "./exam-code-badge";
-import { RatingStars } from "./rating-stars";
+import { resolveThumbnailUrl } from "@/lib/supabase/products";
 
 const typeIcon: Record<Product["type"], React.ReactNode> = {
   "Past Paper": (
@@ -19,18 +21,31 @@ const typeIcon: Record<Product["type"], React.ReactNode> = {
 };
 
 export function ResourceCard({ product }: { product: Product }) {
+  const resolvedThumbnail = product.thumbnail ? resolveThumbnailUrl(product.thumbnail) : null;
+
   return (
     <Link
       href={`/product/${product.slug}`}
       className="card-hover group flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white"
     >
       <div className={`relative flex h-40 items-end overflow-hidden bg-gradient-to-br ${product.cover} p-4`}>
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
-        <div className="absolute inset-0 flex items-center justify-center opacity-90 transition-transform duration-500 group-hover:scale-105">
-          <svg viewBox="0 0 24 24" className="h-16 w-16 text-white/25" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
-            {typeIcon[product.type]}
-          </svg>
-        </div>
+        {resolvedThumbnail ? (
+          <img
+            src={resolvedThumbnail}
+            alt={product.title}
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <>
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
+            <div className="absolute inset-0 flex items-center justify-center opacity-90 transition-transform duration-500 group-hover:scale-105">
+              <svg viewBox="0 0 24 24" className="h-16 w-16 text-white/25" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
+                {typeIcon[product.type]}
+              </svg>
+            </div>
+          </>
+        )}
         {product.bestseller && (
           <span className="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-ink shadow-sm">
             Bestseller
@@ -48,11 +63,10 @@ export function ResourceCard({ product }: { product: Product }) {
         <p className="text-[13px] leading-relaxed text-slate">
           {product.subject} · {product.level} · {product.pages} pages
         </p>
-        <RatingStars rating={product.rating} count={product.reviewCount} />
         <div className="mt-auto flex items-center justify-between pt-4">
           <div className="flex items-center gap-2">
             <span className="font-display text-[19px] text-ink">${product.price.toFixed(2)}</span>
-            {product.originalPrice && (
+            {product.originalPrice && product.originalPrice > product.price && (
               <span className="text-[13px] text-slate line-through">
                 ${product.originalPrice.toFixed(2)}
               </span>

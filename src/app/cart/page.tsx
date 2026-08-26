@@ -19,14 +19,6 @@ export default function CartPage() {
     (sum, item) => sum + item.product.price * item.quantity,
     0,
   );
-  const discount = items.reduce((sum, item) => {
-    if (item.product.originalPrice)
-      return (
-        sum +
-        (item.product.originalPrice - item.product.price) * item.quantity
-      );
-    return sum;
-  }, 0);
   const tax = Math.round(subtotal * 0.05 * 100) / 100;
 
   const recommended = products
@@ -98,7 +90,6 @@ export default function CartPage() {
                   <FadeIn delay={100}>
                     <OrderSummary
                       subtotal={subtotal}
-                      discount={discount}
                       tax={tax}
                     />
                   </FadeIn>

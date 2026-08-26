@@ -1,4 +1,4 @@
-# PROJECT_CONTEXT.md — Marque Digital Marketplace
+# PROJECT_CONTEXT.md — Scholar Stack Digital Marketplace
 
 > Premium marketplace for Cambridge IGCSE, O Level & A Level study resources.
 > Two roles: student and admin. Supabase Auth (email/password + Google OAuth).
@@ -57,11 +57,7 @@ src/
 │       ├── page.tsx              # Overview: platform stats, users, orders
 │       ├── users/page.tsx        # User management with role/status badges
 │       ├── resources/page.tsx    # Resource moderation queue
-│       ├── orders/page.tsx       # Order management + refund flow
-│       ├── categories/page.tsx   # Category CRUD by type
-│       ├── reviews/page.tsx      # Review moderation
-│       ├── analytics/page.tsx    # Platform analytics, charts, top sellers
-│       └── settings/page.tsx     # Tabbed platform settings
+│       └── orders/page.tsx       # Order management + refund flow
 ├── components/
 │   ├── marketplace/              # 34 marketplace components
 │   ├── dashboard/                # 6 dashboard components
@@ -127,10 +123,6 @@ src/
 | `/admin/users` | User management: search, filters, role badges, suspend/delete | Protected (admin) |
 | `/admin/resources` | Resource moderation: approve, reject, feature, edit metadata | Protected (admin) |
 | `/admin/orders` | Order management: refund button, status updates, invoice preview | Protected (admin) |
-| `/admin/categories` | Category CRUD: subject, level, tag, resource type management | Protected (admin) |
-| `/admin/reviews` | Review moderation: approve, hide, delete, reported reviews | Protected (admin) |
-| `/admin/analytics` | Platform analytics: revenue, users, downloads, sales by country, top sellers | Protected (admin) |
-| `/admin/settings` | Platform settings: general, branding, email, payment, storage, security | Protected (admin) |
 
 ### Legacy Pages
 | Route | Description | Type |
@@ -308,13 +300,6 @@ All interactive elements meet 44px minimum touch target on mobile. Inputs use `p
 | `adminUsers` | 10 admin users with roles and statuses |
 | `adminResources` | 10 admin resources with moderation statuses |
 | `adminOrders` | 7 admin orders |
-| `adminReviews` | 7 admin reviews including reported ones |
-| `adminCategories` | 15 categories across 4 types |
-| `adminRevenueData` | 6-month platform revenue data |
-| `adminUsersData` | 6-month active users data |
-| `adminDownloadsData` | 6-month downloads data |
-| `adminSalesByCountry` | Sales breakdown by country for donut chart |
-| `adminTopSellers` | Top 5 sellers by revenue |
 
 ---
 

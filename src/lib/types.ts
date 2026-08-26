@@ -1,13 +1,5 @@
 export type ProductType = "Past Paper" | "Mock Test" | "Worksheet" | "Revision Notes";
 
-export type ProductReview = {
-  name: string;
-  role: string;
-  rating: number;
-  date: string;
-  text: string;
-};
-
 export type Product = {
   id: string;
   slug: string;
@@ -19,7 +11,6 @@ export type Product = {
   type: ProductType;
   price: number;
   originalPrice?: number;
-  discount?: number;
   rating: number;
   reviewCount: number;
   pages: number;
@@ -31,6 +22,7 @@ export type Product = {
   tags: string[];
   author: string;
   updatedAt: string;
+  createdAt?: string;
   examBoard?: string;
   session?: string;
   paper?: string;
@@ -39,12 +31,13 @@ export type Product = {
   format?: string;
   version?: string;
   thumbnail?: string;
+  previewImages?: string[];
   pdfUrl?: string;
   longDescription?: string;
   whatsIncluded?: string[];
   syllabusCoverage?: string[];
   ratingDistribution?: { stars: number; count: number }[];
-  reviews?: ProductReview[];
+  reviews?: { name: string; role: string; rating: number; date: string; text: string }[];
   productFaqs?: FAQ[];
 };
 

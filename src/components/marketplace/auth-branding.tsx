@@ -30,7 +30,7 @@ export function AuthBranding() {
         {/* Logo */}
         <Link href="/" className="inline-block">
           <span className="font-display text-[26px] font-semibold tracking-tight">
-            Marque
+            Scholar Stack
           </span>
         </Link>
       </div>
@@ -42,7 +42,7 @@ export function AuthBranding() {
           <span className="font-medium">confidence.</span>
         </h1>
         <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/60">
-          Access premium Cambridge IGCSE, O Level and A Level study resources — curated by examiners, designed for results.
+          Access premium Grade 4–8 study resources — curated by examiners, designed for results.
         </p>
 
         {/* Trust points */}

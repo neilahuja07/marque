@@ -3,11 +3,11 @@ import { Navbar, Footer } from "@/components/marketplace";
 import { FadeIn } from "@/components/ui/fade-in";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Marque",
-  description: "Marque's terms of service. Read the rules and guidelines for using our platform.",
+  title: "Terms of Service — Scholar Stack",
+  description: "Scholar Stack's terms of service. Read the rules and guidelines for using our platform.",
   openGraph: {
-    title: "Terms of Service — Marque",
-    description: "Marque's terms of service. Read the rules and guidelines for using our platform.",
+    title: "Terms of Service — Scholar Stack",
+    description: "Scholar Stack's terms of service. Read the rules and guidelines for using our platform.",
     type: "website",
   },
 };
@@ -27,14 +27,14 @@ export default function TermsPage() {
               <section>
                 <h2 className="font-display text-[18px] text-ink">1. Acceptance of terms</h2>
                 <p className="mt-3">
-                  By accessing or using Marque, you agree to these Terms of Service. If you do not agree, please do not use our platform.
+                  By accessing or using Scholar Stack, you agree to these Terms of Service. If you do not agree, please do not use our platform.
                 </p>
               </section>
 
               <section>
                 <h2 className="font-display text-[18px] text-ink">2. Account registration</h2>
                 <p className="mt-3">
-                  You must provide accurate and complete information when creating an account. You are responsible for maintaining the security of your account credentials. You must be at least 13 years old to use Marque.
+                  You must provide accurate and complete information when creating an account. You are responsible for maintaining the security of your account credentials. You must be at least 13 years old to use Scholar Stack.
                 </p>
               </section>
 
@@ -62,21 +62,21 @@ export default function TermsPage() {
               <section>
                 <h2 className="font-display text-[18px] text-ink">6. Intellectual property</h2>
                 <p className="mt-3">
-                  All resources on Marque are owned by their respective creators. Your purchase grants you a personal license to use the resource. All intellectual property rights remain with the original creator.
+                  All resources on Scholar Stack are owned by their respective creators. Your purchase grants you a personal license to use the resource. All intellectual property rights remain with the original creator.
                 </p>
               </section>
 
               <section>
                 <h2 className="font-display text-[18px] text-ink">7. Limitation of liability</h2>
                 <p className="mt-3">
-                  Marque is provided &ldquo;as is&rdquo; without warranties of any kind. We are not liable for any damages arising from the use of our platform or resources. Our total liability shall not exceed the amount you paid for the specific resource in question.
+                  Scholar Stack is provided &ldquo;as is&rdquo; without warranties of any kind. We are not liable for any damages arising from the use of our platform or resources. Our total liability shall not exceed the amount you paid for the specific resource in question.
                 </p>
               </section>
 
               <section>
                 <h2 className="font-display text-[18px] text-ink">8. Changes to terms</h2>
                 <p className="mt-3">
-                  We may update these terms from time to time. Continued use of Marque after changes constitutes acceptance of the revised terms. We will notify registered users of material changes via email.
+                  We may update these terms from time to time. Continued use of Scholar Stack after changes constitutes acceptance of the revised terms. We will notify registered users of material changes via email.
                 </p>
               </section>
             </div>

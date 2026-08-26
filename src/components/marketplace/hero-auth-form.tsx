@@ -79,7 +79,7 @@ export function HeroAuthForm() {
       return;
     }
 
-    sessionStorage.setItem("marque_signup_email", email);
+    sessionStorage.setItem("scholar-stack_signup_email", email);
     router.push("/verify-email");
   };
 

@@ -1,4 +1,4 @@
-# Marque — Digital Marketplace for Cambridge Study Resources
+# Scholar Stack — Digital Marketplace for Cambridge Study Resources
 
 Premium marketplace for Cambridge IGCSE, O Level & A Level study resources. Two roles: student and admin. Supabase Auth (email/password + Google OAuth).
 

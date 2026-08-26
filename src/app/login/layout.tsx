@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign In — Marque",
-  description: "Sign in to your Marque account.",
+  title: "Sign In — Scholar Stack",
+  description: "Sign in to your Scholar Stack account.",
   openGraph: {
-    title: "Sign In — Marque",
-    description: "Sign in to your Marque account.",
+    title: "Sign In — Scholar Stack",
+    description: "Sign in to your Scholar Stack account.",
     type: "website",
   },
 };
