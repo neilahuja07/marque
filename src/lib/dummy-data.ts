@@ -14,14 +14,6 @@ export type Stat = {
   label: string;
 };
 
-export type Order = {
-  id: string;
-  date: string;
-  total: number;
-  status: "completed" | "pending" | "refunded";
-  items: { title: string; price: number }[];
-};
-
 export const stats: Stat[] = [
   { value: "1,256", label: "Resources catalogued" },
   { value: "2015–2025", label: "Past paper sessions covered" },
@@ -454,33 +446,6 @@ export const faqs: FAQ[] = [
   {
     question: "Do you offer bulk pricing for schools?",
     answer: "For bulk subscription or pricing-related queries, please contact us at contactscholarstack@gmail.com.",
-  },
-];
-
-export const sampleOrders: Order[] = [
-  {
-    id: "ORD-001",
-    date: "2025-06-10",
-    total: 14.5,
-    status: "completed",
-    items: [
-      { title: "IGCSE Mathematics Paper 4 — Worked Solutions Pack", price: 6.5 },
-      { title: "IGCSE Physics — Complete Revision Notes", price: 8.0 },
-    ],
-  },
-  {
-    id: "ORD-002",
-    date: "2025-05-22",
-    total: 11.0,
-    status: "completed",
-    items: [{ title: "O Level English 1123 — Ten-Year Past Paper Pack", price: 11.0 }],
-  },
-  {
-    id: "ORD-003",
-    date: "2025-04-15",
-    total: 9.5,
-    status: "refunded",
-    items: [{ title: "IGCSE Mathematics — Topic Worksheets (200+ pages)", price: 9.5 }],
   },
 ];
 

@@ -54,7 +54,7 @@ export function Footer() {
               <ul className="mt-3 space-y-0.5 text-[13px] text-slate">
                 {section.links.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href} className="block py-1.5 transition-colors hover:text-ink">
+                    <Link href={link.href} className="block py-2.5 sm:py-1.5 transition-colors hover:text-ink">
                       {link.label}
                     </Link>
                   </li>
@@ -70,10 +70,10 @@ export function Footer() {
           </span>
           <div className="flex gap-5">
             <Link href="/terms" className="transition-colors hover:text-ink">
-              Terms
+              Terms of Service
             </Link>
             <Link href="/privacy" className="transition-colors hover:text-ink">
-              Privacy
+              Privacy Policy
             </Link>
           </div>
         </div>

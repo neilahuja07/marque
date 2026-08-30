@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
-import { DashboardSearch, DashboardFilterPills, DashboardEmpty, DashboardSectionHeader } from "@/components/dashboard/dashboard-sub-page";
+import { DashboardSearch, DashboardEmpty, DashboardSectionHeader } from "@/components/dashboard/dashboard-sub-page";
 import { FadeIn } from "@/components/ui/fade-in";
 import { useAuth } from "@/components/auth-provider";
 import { createClient } from "@/lib/supabase/client";
@@ -15,26 +14,76 @@ interface DownloadItem {
   purchased_at: string;
 }
 
-const filters = [
-  { label: "All", value: "all" },
-  { label: "Science", value: "Science" },
-  { label: "Mathematics", value: "Mathematics" },
-  { label: "English", value: "English" },
-];
+function triggerDownload(blob: Blob, filename: string) {
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = filename || "resource.pdf";
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
 
 export default function DownloadsPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const [downloads, setDownloads] = useState<DownloadItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
   const [selected, setSelected] = useState<string[]>([]);
+  const [downloading, setDownloading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const downloadProduct = async (productId: string) => {
+    if (downloading) return;
+    setError(null);
+    setDownloading(productId);
+    try {
+      const res = await fetch("/api/orders/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+      });
+
+      if (!res.ok) {
+        let message = "Download failed.";
+        try {
+          const data = await res.json();
+          if (data?.error) message = data.error;
+        } catch {
+          /* ignore */
+        }
+        throw new Error(message);
+      }
+
+      const disposition = res.headers.get("Content-Disposition") || "";
+      const starMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+      const plainMatch = disposition.match(/filename="?([^";]+)"?/i);
+      const filename = starMatch
+        ? decodeURIComponent(starMatch[1].trim())
+        : plainMatch
+          ? plainMatch[1].trim()
+          : `${productId}.pdf`;
+      const blob = await res.blob();
+      triggerDownload(blob, filename);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Download failed.");
+    } finally {
+      setDownloading(null);
+    }
+  };
+
+  const downloadSelected = async () => {
+    for (const id of selected) {
+      await downloadProduct(id);
+    }
+  };
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+    if (!user) return;
+
+    let active = true;
 
     const fetchDownloads = async () => {
       const supabase = createClient();
@@ -66,10 +115,16 @@ export default function DownloadsPage() {
           setDownloads(Array.from(uniqueProducts.values()));
         }
       }
-      setLoading(false);
+      if (active) setLoading(false);
     };
 
-    fetchDownloads();
+    fetchDownloads().catch(() => {
+      if (active) setLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
   }, [user]);
 
   const filtered = downloads.filter((d) => {
@@ -98,18 +153,26 @@ export default function DownloadsPage() {
             count={downloads.length}
             actions={
               selected.length > 0 ? (
-                <button className="btn-primary inline-flex items-center gap-2 rounded-[8px] bg-teal-dark px-4 py-2.5 text-[13px] font-medium text-white">
+                <button onClick={downloadSelected} disabled={!!downloading} className="btn-primary inline-flex items-center gap-2 rounded-[8px] bg-teal-dark px-4 py-2.5 text-[13px] font-medium text-white disabled:cursor-not-allowed disabled:opacity-60">
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="7 10 12 15 17 10" />
                     <line x1="12" y1="15" x2="12" y2="3" />
                   </svg>
-                  Download ({selected.length})
+                  {downloading ? "Preparing…" : `Download (${selected.length})`}
                 </button>
               ) : undefined
             }
           />
         </FadeIn>
+
+        {error && (
+          <FadeIn delay={20}>
+            <div className="rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-600">
+              {error}
+            </div>
+          </FadeIn>
+        )}
 
         <FadeIn delay={40}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -117,7 +180,7 @@ export default function DownloadsPage() {
           </div>
         </FadeIn>
 
-        {loading ? (
+        {loading && user ? (
           <FadeIn delay={60}>
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <p className="text-[13px] text-slate">Loading downloads...</p>
@@ -160,8 +223,12 @@ export default function DownloadsPage() {
                           {new Date(dl.purchased_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                         </td>
                         <td className="px-4 py-3.5">
-                          <button className="rounded-[6px] bg-teal-dark/10 px-3 py-1.5 text-[12px] font-medium text-teal-dark transition-colors hover:bg-teal-dark hover:text-white">
-                            Download
+                          <button
+                            onClick={() => downloadProduct(dl.product_id)}
+                            disabled={downloading === dl.product_id}
+                            className="rounded-[6px] bg-teal-dark/10 px-3 py-1.5 text-[12px] font-medium text-teal-dark transition-colors hover:bg-teal-dark hover:text-white disabled:cursor-wait disabled:opacity-60"
+                          >
+                            {downloading === dl.product_id ? "Preparing…" : "Download"}
                           </button>
                         </td>
                       </tr>
@@ -185,7 +252,13 @@ export default function DownloadsPage() {
                       </div>
                     </div>
                     <div className="mt-3">
-                      <button className="btn-primary w-full rounded-[6px] bg-teal-dark px-3 py-2 text-[12px] font-medium text-white">Download</button>
+                      <button
+                        onClick={() => downloadProduct(dl.product_id)}
+                        disabled={downloading === dl.product_id}
+                        className="btn-primary w-full rounded-[6px] bg-teal-dark px-3 py-2 text-[12px] font-medium text-white disabled:cursor-wait disabled:opacity-60"
+                      >
+                        {downloading === dl.product_id ? "Preparing…" : "Download"}
+                      </button>
                     </div>
                   </div>
                 </FadeIn>

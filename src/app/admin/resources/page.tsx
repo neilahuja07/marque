@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -11,6 +12,7 @@ import {
   DashboardSearch,
   DashboardFilterPills,
 } from "@/components/dashboard/dashboard-sub-page";
+import { useAuth } from "@/components/auth-provider";
 import { adminSidebarItems } from "@/lib/admin-sidebar";
 import { useProducts } from "@/lib/product-store";
 import { ProductEditor, type ProductData } from "@/components/admin/product-editor";
@@ -43,6 +45,8 @@ function formatDate(dateStr: string): string {
 }
 
 export default function AdminResourcesPage() {
+  const { role, loading: authLoading } = useAuth();
+  const router = useRouter();
   const { products, addProduct, updateProduct, deleteProduct, togglePublish, toggleFeatured } = useProducts();
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
@@ -51,6 +55,12 @@ export default function AdminResourcesPage() {
   const [editorMode, setEditorMode] = useState<"add" | "edit">("add");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && role !== "admin") {
+      router.replace("/dashboard");
+    }
+  }, [role, authLoading, router]);
 
   const filtered = useMemo(() => {
     return products
@@ -84,6 +94,10 @@ export default function AdminResourcesPage() {
         }
       });
   }, [products, search, activeFilter, sortKey]);
+
+  if (authLoading || role !== "admin") {
+    return null;
+  }
 
   const handleAdd = () => {
     setEditorMode("add");

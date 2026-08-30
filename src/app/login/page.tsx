@@ -2,15 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthBranding } from "@/components/marketplace/auth-branding";
 import { AuthCard } from "@/components/marketplace/auth-card";
 import { AuthFormInput, PasswordInput } from "@/components/marketplace/auth-form-input";
 import { SocialLoginDivider } from "@/components/marketplace/social-login-divider";
 import { createClient } from "@/lib/supabase/client";
+import { sanitizeRedirectPath } from "@/lib/safe-redirect";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = sanitizeRedirectPath(
+    searchParams.get("redirect"),
+    typeof window !== "undefined" ? window.location.origin : "",
+  );
   const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,7 +77,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push(redirectTo);
     router.refresh();
   };
 

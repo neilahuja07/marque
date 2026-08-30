@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { ExamCodeBadge } from "./exam-code-badge";
+import { resolveThumbnailUrl } from "@/lib/supabase/products";
 
 interface CartItemProps {
   product: Product;
@@ -12,12 +14,26 @@ interface CartItemProps {
 }
 
 export function CartItem({ product, quantity, onQuantityChange, onRemove, onSaveForLater }: CartItemProps) {
+  const resolvedThumbnail = product.thumbnail ? resolveThumbnailUrl(product.thumbnail) : null;
+  const [imgError, setImgError] = useState(false);
+  const showImage = resolvedThumbnail && !imgError;
+
   return (
     <div className="flex gap-4 rounded-[var(--radius-card)] border border-ink/10 bg-white p-4 sm:p-5">
       {/* Thumbnail */}
-      <div className={`relative h-24 w-20 shrink-0 overflow-hidden rounded-[8px] bg-gradient-to-br ${product.cover}`}>
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
-        <span className="absolute bottom-1.5 left-1.5 rounded bg-white/95 px-1.5 py-0.5 text-[9px] font-medium text-ink">
+      <div className="relative flex h-24 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[8px] bg-parchment p-1.5">
+        {showImage ? (
+          <img
+            src={resolvedThumbnail}
+            alt={product.title}
+            className="max-h-full w-auto max-w-full object-contain"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <span className="text-[9px] font-medium text-ink/40">{product.type}</span>
+        )}
+        <span className="absolute bottom-1.5 left-1.5 rounded bg-white/95 px-1.5 py-0.5 text-[9px] font-medium text-ink border border-ink/5">
           {product.type}
         </span>
       </div>

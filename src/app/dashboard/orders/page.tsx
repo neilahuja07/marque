@@ -145,7 +145,7 @@ export default function OrdersPage() {
                             ))}
                           </div>
                         </td>
-                        <td className="px-5 py-3.5 font-medium text-ink">{formatUsd(order.amount / 95)}</td>
+                        <td className="px-5 py-3.5 font-medium text-ink">{formatUsd(order.amount)}</td>
                         <td className="px-5 py-3.5 text-slate">Razorpay</td>
                         <td className="px-5 py-3.5">
                           <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium capitalize ${statusColors[order.status] || ""}`}>
@@ -181,7 +181,7 @@ export default function OrdersPage() {
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-ink/10 pt-3">
                       <div>
-                        <p className="text-[13px] font-medium text-ink">{formatUsd(order.amount / 95)}</p>
+                        <p className="text-[13px] font-medium text-ink">{formatUsd(order.amount)}</p>
                         <p className="text-[11px] text-slate">Razorpay</p>
                       </div>
                     </div>

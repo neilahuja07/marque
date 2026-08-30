@@ -53,7 +53,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex text-[14px] text-ink/80">
+        <nav className="hidden items-center gap-8 lg:flex text-[14px] text-ink/80">
           {subjects.map((subject) => (
             <MegaMenuDesktop key={subject} subject={subject} />
           ))}
@@ -104,7 +104,7 @@ export function Navbar() {
           {!loading && (
             <>
               {user ? (
-                <div className="hidden items-center gap-3 md:flex">
+                <div className="hidden items-center gap-3 lg:flex">
                   <button
                     onClick={signOut}
                     className="rounded-[8px] border border-ink/15 px-4 py-2 text-[13px] font-medium text-ink transition-all hover:border-ink/30 hover:shadow-sm"
@@ -113,7 +113,7 @@ export function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="hidden items-center gap-3 md:flex">
+                <div className="hidden items-center gap-3 lg:flex">
                   <Link
                     href="/login"
                     className="rounded-[8px] border border-ink/15 px-4 py-2 text-[13px] font-medium text-ink transition-all hover:border-ink/30 hover:shadow-sm"
@@ -132,7 +132,7 @@ export function Navbar() {
           )}
 
           <button
-            className="flex items-center justify-center rounded-[8px] border border-ink/15 p-2.5 transition-all duration-200 hover:border-ink/30 md:hidden"
+            className="flex items-center justify-center rounded-[8px] border border-ink/15 p-2.5 transition-all duration-200 hover:border-ink/30 lg:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -154,7 +154,7 @@ export function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-ink/10 bg-parchment px-6 py-4 md:hidden">
+        <div className="border-t border-ink/10 bg-parchment px-6 py-4 lg:hidden">
           <nav className="flex flex-col gap-1 text-[14px] text-ink/80">
             {subjects.map((subject) => (
               <SubjectNavItem

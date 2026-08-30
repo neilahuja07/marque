@@ -218,11 +218,17 @@ export function WorksheetCarousel() {
               type="button"
               onClick={() => go(i, true)}
               aria-label={`Go to worksheet ${i + 1}`}
-              className={cn(
-                "h-1.5 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-dark",
-                i === active ? "w-5 bg-teal-dark" : "w-1.5 bg-ink/20 hover:bg-ink/40",
-              )}
-            />
+              aria-current={i === active}
+              className="flex h-8 min-w-8 items-center justify-center rounded-full px-1.5 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-dark"
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "block h-1.5 rounded-full transition-all duration-300",
+                  i === active ? "w-5 bg-teal-dark" : "w-1.5 bg-ink/20 hover:bg-ink/40",
+                )}
+              />
+            </button>
           ))}
         </div>
       </div>

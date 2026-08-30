@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { sanitizeRedirectPath } from "@/lib/safe-redirect";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -34,6 +35,25 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
+  // Server-side validation of the post-login `redirect` parameter to prevent
+  // open redirects. Rewrites the URL to a sanitized value so the client only
+  // ever receives a safe, same-origin path. Only rewrites when the value
+  // actually changes, so legitimate internal redirects add no extra hop.
+  if (pathname === "/login") {
+    const rawRedirect = request.nextUrl.searchParams.get("redirect");
+    if (rawRedirect !== null) {
+      const safeRedirect = sanitizeRedirectPath(
+        rawRedirect,
+        request.nextUrl.origin,
+      );
+      if (safeRedirect !== rawRedirect) {
+        const url = request.nextUrl.clone();
+        url.searchParams.set("redirect", safeRedirect);
+        return NextResponse.redirect(url);
+      }
+    }
+  }
+
   const publicPages = [
     "/", "/browse", "/about", "/contact", "/faq",
     "/privacy", "/terms", "/cart", "/checkout",
@@ -46,11 +66,20 @@ export async function updateSession(request: NextRequest) {
 
   const isApiRoute = pathname.startsWith("/api/");
 
+  const protectedApiRoutes = [
+    "/api/starter-pack/download",
+  ];
+
+  const isProtectedApiRoute = isApiRoute && protectedApiRoutes.some((route) => pathname.startsWith(route));
+
   if (!user && !isPublicPage && !isApiRoute) {
-    console.log(`[Middleware] Redirecting unauthenticated request: ${pathname} -> /login`);
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
+  }
+
+  if (!user && isProtectedApiRoute) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   if (user) {

@@ -62,6 +62,12 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    if (!authLoading && !user) {
+      router.push(`/login?redirect=${encodeURIComponent("/checkout")}`);
+    }
+  }, [user, authLoading, router]);
+
+  useEffect(() => {
     setMounted(true);
 
     const script = document.createElement("script");
@@ -93,6 +99,11 @@ export default function CheckoutPage() {
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!user) {
+      router.push(`/login?redirect=${encodeURIComponent("/checkout")}`);
+      return;
+    }
+
     if (isProcessing) return;
 
     if (!customerEmail) {
@@ -108,32 +119,30 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
-      const orderRes = await fetch("/api/razorpay/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: total,
-          receipt: `rcpt_${Date.now()}`,
-          notes: { email: customerEmail },
-        }),
-      });
-
-      const resText = await orderRes.text();
-      console.log("[Checkout] /api/razorpay/order response status:", orderRes.status);
-      console.log("[Checkout] /api/razorpay/order response body:", resText);
-
-      if (!orderRes.ok) {
-        throw new Error("Failed to create order");
-      }
-
-      const { orderId, amount, currency } = JSON.parse(resText);
-
       const razorpayItems = checkoutItems.map((item) => ({
         productId: item.product.id,
         title: item.product.title,
         price: item.product.price,
         quantity: item.quantity,
       }));
+
+      const orderRes = await fetch("/api/razorpay/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: razorpayItems,
+          receipt: `rcpt_${Date.now()}`,
+          notes: { email: customerEmail },
+        }),
+      });
+
+      const resText = await orderRes.text();
+
+      if (!orderRes.ok) {
+        throw new Error("Failed to create order");
+      }
+
+      const { orderId, amount, currency } = JSON.parse(resText);
 
       const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -194,7 +203,7 @@ export default function CheckoutPage() {
       toast(err instanceof Error ? err.message : JSON.stringify(err), "error");
       setIsProcessing(false);
     }
-  }, [customerEmail, checkoutItems, total, isProcessing, toast, clearCart, router]);
+  }, [user, customerEmail, checkoutItems, total, isProcessing, toast, clearCart, router]);
 
   return (
     <>

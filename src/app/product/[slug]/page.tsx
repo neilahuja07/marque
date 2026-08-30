@@ -9,16 +9,16 @@ import { useProducts } from "@/lib/product-store";
 import { useCart } from "@/lib/cart-store";
 import { Breadcrumbs } from "@/components/marketplace/breadcrumbs";
 import { ProductGallery } from "@/components/marketplace/product-gallery";
-import { WhatsIncluded } from "@/components/marketplace/whats-included";
-import { SyllabusCoverage } from "@/components/marketplace/syllabus-coverage";
 import { ResourceInfo } from "@/components/marketplace/resource-info";
 import { ExamCodeBadge } from "@/components/marketplace/exam-code-badge";
+import { useAuth } from "@/components/auth-provider";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const router = useRouter();
   const { getProductBySlug, products } = useProducts();
   const { addItem } = useCart();
+  const { user } = useAuth();
   const product = getProductBySlug(slug);
 
   if (!product) {
@@ -153,6 +153,10 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   </button>
                   <button
                     onClick={() => {
+                      if (!user) {
+                        router.push(`/login?redirect=${encodeURIComponent(`/product/${slug}`)}`);
+                        return;
+                      }
                       addItem(product);
                       router.push("/checkout?buyNow=true");
                     }}
@@ -162,12 +166,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   </button>
                 </div>
 
-                {/* What's included */}
-                {product.whatsIncluded && (
-                  <div className="mt-6">
-                    <WhatsIncluded items={product.whatsIncluded} />
-                  </div>
-                )}
               </div>
             </FadeIn>
           </div>
@@ -185,15 +183,6 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   ))}
                 </div>
               </div>
-            </section>
-          </FadeIn>
-        )}
-
-        {/* Syllabus coverage */}
-        {product.syllabusCoverage && (
-          <FadeIn>
-            <section className="mx-auto max-w-7xl px-6 py-14">
-              <SyllabusCoverage topics={product.syllabusCoverage} />
             </section>
           </FadeIn>
         )}

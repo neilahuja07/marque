@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import type { Product } from "@/lib/types";
 import { ExamCodeBadge } from "./exam-code-badge";
-import { resolveThumbnailUrl } from "@/lib/supabase/products";
+import { resolveThumbnailUrl, resolvePreviewUrl } from "@/lib/supabase/products";
 
 const typeIcon: Record<Product["type"], React.ReactNode> = {
   "Past Paper": (
@@ -20,38 +21,65 @@ const typeIcon: Record<Product["type"], React.ReactNode> = {
   ),
 };
 
+function TypeFallback({ type }: { type: Product["type"] }) {
+  return (
+    <div className="flex flex-col items-center gap-2 text-ink/20">
+      <svg viewBox="0 0 24 24" className="h-14 w-14" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
+        {typeIcon[type]}
+      </svg>
+    </div>
+  );
+}
+
+function getPreviewUrl(product: Product): string | undefined {
+  const previews = (product.previewImages || []).filter((p) => typeof p === "string" && p.length > 0);
+  if (previews.length > 0) {
+    return resolvePreviewUrl(previews[0]) || previews[0];
+  }
+  return undefined;
+}
+
 export function ResourceCard({ product }: { product: Product }) {
-  const resolvedThumbnail = product.thumbnail ? resolveThumbnailUrl(product.thumbnail) : null;
+  const thumbnailUrl = product.thumbnail ? resolveThumbnailUrl(product.thumbnail) : undefined;
+  const previewUrl = getPreviewUrl(product);
+
+  const [thumbFailed, setThumbFailed] = useState(false);
+  const [previewFailed, setPreviewFailed] = useState(false);
+
+  const showThumb = thumbnailUrl && !thumbFailed;
+  const showPreview = !showThumb && previewUrl && !previewFailed;
 
   return (
     <Link
       href={`/product/${product.slug}`}
       className="card-hover group flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white"
     >
-      <div className={`relative flex h-40 items-end overflow-hidden bg-gradient-to-br ${product.cover} p-4`}>
-        {resolvedThumbnail ? (
+      <div className="relative flex h-40 items-center justify-center overflow-hidden bg-parchment p-3">
+        {showThumb ? (
           <img
-            src={resolvedThumbnail}
+            src={thumbnailUrl}
             alt={product.title}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="relative max-h-full w-auto max-w-full object-contain drop-shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
             loading="lazy"
+            onError={() => setThumbFailed(true)}
+          />
+        ) : showPreview ? (
+          <img
+            src={previewUrl}
+            alt={product.title}
+            className="relative max-h-full w-auto max-w-full object-contain drop-shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+            loading="lazy"
+            onError={() => setPreviewFailed(true)}
           />
         ) : (
-          <>
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
-            <div className="absolute inset-0 flex items-center justify-center opacity-90 transition-transform duration-500 group-hover:scale-105">
-              <svg viewBox="0 0 24 24" className="h-16 w-16 text-white/25" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
-                {typeIcon[product.type]}
-              </svg>
-            </div>
-          </>
+          <TypeFallback type={product.type} />
         )}
         {product.bestseller && (
           <span className="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-medium text-ink shadow-sm">
             Bestseller
           </span>
         )}
-        <span className="relative z-10 rounded-[4px] bg-white/95 px-2 py-0.5 text-[11px] font-medium text-ink">
+        <span className="absolute bottom-3 left-3 z-10 rounded-[4px] bg-white/95 px-2 py-0.5 text-[11px] font-medium text-ink shadow-sm border border-ink/5">
           {product.type}
         </span>
       </div>

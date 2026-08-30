@@ -187,7 +187,7 @@ export default function DashboardPage() {
                               ))}
                             </div>
                           </td>
-                          <td className="px-5 py-3.5 font-medium text-ink">{formatUsd(order.amount / 95)}</td>
+                          <td className="px-5 py-3.5 font-medium text-ink">{formatUsd(order.amount)}</td>
                           <td className="px-5 py-3.5">
                             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${statusColors[order.status] || ""}`}>
                               {order.status}
@@ -211,7 +211,7 @@ export default function DashboardPage() {
                         {new Date(order.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                       </p>
                       <div className="mt-2 flex items-center justify-between">
-                        <span className="text-[13px] font-medium text-ink">{formatUsd(order.amount / 95)}</span>
+                        <span className="text-[13px] font-medium text-ink">{formatUsd(order.amount)}</span>
                       </div>
                     </div>
                   ))}

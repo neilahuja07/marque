@@ -28,6 +28,8 @@ const typeIcon: Record<string, React.ReactNode> = {
 
 export function ProductGallery({ cover, title, type, thumbnail, previewImages }: ProductGalleryProps) {
   const [active, setActive] = useState(0);
+  const [mainImgError, setMainImgError] = useState(false);
+  const [thumbErrors, setThumbErrors] = useState<Record<number, boolean>>({});
 
   // Build the image list: up to 4 preview images, falling back to the single thumbnail.
   const resolvedThumbnail = thumbnail ? resolveThumbnailUrl(thumbnail) : null;
@@ -42,30 +44,31 @@ export function ProductGallery({ cover, title, type, thumbnail, previewImages }:
 
   const hasGallery = images.length > 1;
   const activeUrl = images[active]?.url;
+  const showMainImage = activeUrl && !mainImgError;
 
   return (
     <div className="flex flex-col gap-3">
       {/* Main image */}
-      <div className={`relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br ${cover} border border-ink/10`}>
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.18),transparent_55%)]" />
-        {activeUrl ? (
+      <div className="relative flex min-h-[300px] items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-parchment border border-ink/10 shadow-sm">
+        {showMainImage ? (
           <img
             src={activeUrl}
             alt={title}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="relative max-h-[520px] w-auto max-w-full object-contain p-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
             loading={active === 0 ? "eager" : "lazy"}
+            onError={() => setMainImgError(true)}
           />
         ) : (
-          <div className="relative flex flex-col items-center gap-4 text-white">
-            <svg viewBox="0 0 24 24" className="h-20 w-20 text-white/30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+          <div className="relative flex flex-col items-center gap-4 text-ink/20">
+            <svg viewBox="0 0 24 24" className="h-20 w-20" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
               {typeIcon[type] || typeIcon["Past Paper"]}
             </svg>
-            <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-medium backdrop-blur-sm">
+            <span className="rounded-full bg-ink/5 px-3 py-1 text-[11px] font-medium text-ink/40">
               Preview
             </span>
           </div>
         )}
-        <span className="absolute left-4 top-4 rounded-[4px] bg-white/95 px-2.5 py-1 text-[11px] font-medium text-ink">
+        <span className="absolute left-4 top-4 rounded-[4px] bg-white/95 px-2.5 py-1 text-[11px] font-medium text-ink shadow-sm border border-ink/5">
           {type}
         </span>
       </div>
@@ -76,20 +79,29 @@ export function ProductGallery({ cover, title, type, thumbnail, previewImages }:
           {images.map((img, i) => (
             <button
               key={i}
-              onClick={() => setActive(i)}
+              onClick={() => { setActive(i); setMainImgError(false); }}
               aria-label={img.label}
-              className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-[8px] border-2 transition-all duration-200 ${
+              className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-[8px] border-2 bg-parchment transition-all duration-200 ${
                 i === active
                   ? "border-teal-dark"
                   : "border-ink/10 opacity-60 hover:opacity-100"
               }`}
             >
-              <img
-                src={img.url}
-                alt={img.label}
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
+              {thumbErrors[i] ? (
+                <div className="flex h-full w-full items-center justify-center text-ink/20">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round">
+                    {typeIcon[type] || typeIcon["Past Paper"]}
+                  </svg>
+                </div>
+              ) : (
+                <img
+                  src={img.url}
+                  alt={img.label}
+                  className="absolute inset-0 h-full w-full object-contain"
+                  loading="lazy"
+                  onError={() => setThumbErrors((prev) => ({ ...prev, [i]: true }))}
+                />
+              )}
             </button>
           ))}
         </div>
