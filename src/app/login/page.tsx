@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthBranding } from "@/components/marketplace/auth-branding";
@@ -10,7 +10,7 @@ import { SocialLoginDivider } from "@/components/marketplace/social-login-divide
 import { createClient } from "@/lib/supabase/client";
 import { sanitizeRedirectPath } from "@/lib/safe-redirect";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = sanitizeRedirectPath(
@@ -170,5 +170,13 @@ export default function LoginPage() {
         </AuthCard>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   );
 }

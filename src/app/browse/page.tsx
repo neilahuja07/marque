@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Navbar, Footer, ResourceCard } from "@/components/marketplace";
@@ -31,7 +31,7 @@ function sortProducts(items: Product[], sort: string) {
   }
 }
 
-export default function BrowsePage() {
+function BrowseContent() {
   const searchParams = useSearchParams();
   const initialSubject = searchParams.get("subject") || undefined;
   const initialGrade = searchParams.get("grade") || undefined;
@@ -184,5 +184,13 @@ export default function BrowsePage() {
         initialGrade={initialGrade}
       />
     </>
+  );
+}
+
+export default function BrowsePage() {
+  return (
+    <Suspense>
+      <BrowseContent />
+    </Suspense>
   );
 }

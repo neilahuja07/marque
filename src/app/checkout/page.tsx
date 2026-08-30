@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback, useEffect, useState } from "react";
+import { useMemo, useCallback, useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Navbar, Footer } from "@/components/marketplace";
@@ -42,7 +42,7 @@ interface RazorpayResponse {
   razorpay_signature: string;
 }
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const isBuyNow = searchParams.get("buyNow") === "true";
@@ -432,5 +432,13 @@ export default function CheckoutPage() {
 
       <Footer />
     </>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense>
+      <CheckoutContent />
+    </Suspense>
   );
 }

@@ -51,7 +51,7 @@ export default function OrdersPage() {
 
       if (ordersData && ordersData.length > 0) {
         const ordersWithItems = await Promise.all(
-          ordersData.map(async (order) => {
+          ordersData.map(async (order: { id: string; razorpay_order_id: string; amount: number; status: string; created_at: string }) => {
             const { data: items } = await supabase
               .from("order_items")
               .select("title, price")
