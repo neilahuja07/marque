@@ -109,6 +109,13 @@ export async function POST(request: Request) {
 
     const amountInPaise = usdToPaise(totalUsd);
 
+    if (amountInPaise < 100) {
+      return Response.json(
+        { error: "Order amount is below the minimum payment of 100 paise" },
+        { status: 400 },
+      );
+    }
+
     const safeNotes: Record<string, string | number | null> = {};
     if (isPlainObject(notes)) {
       for (const [key, value] of Object.entries(notes)) {

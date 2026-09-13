@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getSiteUrl } from "@/lib/site-url";
 
 type AuthMode = "signin" | "signup";
 
@@ -64,7 +65,7 @@ export function HeroAuthForm() {
       password,
       options: {
         data: { full_name: name, role: "student" },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getSiteUrl()}/auth/callback`,
       },
     });
 
@@ -89,7 +90,7 @@ export function HeroAuthForm() {
     setIsLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${getSiteUrl()}/reset-password`,
     });
 
     setIsLoading(false);

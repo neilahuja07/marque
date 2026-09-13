@@ -8,6 +8,7 @@ import { AuthCard } from "@/components/marketplace/auth-card";
 import { AuthFormInput, PasswordInput } from "@/components/marketplace/auth-form-input";
 import { SocialLoginDivider } from "@/components/marketplace/social-login-divider";
 import { createClient } from "@/lib/supabase/client";
+import { getSiteUrl } from "@/lib/site-url";
 
 const countries = [
   "India",
@@ -124,7 +125,7 @@ export default function RegisterPage() {
           country: form.country,
           role: "student",
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${getSiteUrl()}/auth/callback`,
       },
     });
 
