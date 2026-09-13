@@ -139,7 +139,12 @@ function CheckoutContent() {
       const resText = await orderRes.text();
 
       if (!orderRes.ok) {
-        throw new Error("Failed to create order");
+        let msg = "Failed to create order";
+        try {
+          const errBody = JSON.parse(resText);
+          if (errBody.error) msg = errBody.error;
+        } catch { /* keep default */ }
+        throw new Error(msg);
       }
 
       const { orderId, amount, currency } = JSON.parse(resText);

@@ -111,7 +111,7 @@ export async function POST(request: Request) {
 
     if (amountInPaise < 100) {
       return Response.json(
-        { error: "Order amount is below the minimum payment of 100 paise" },
+        { error: "Minimum order amount is $0.02 USD. Your cart total is too low for online payment." },
         { status: 400 },
       );
     }
