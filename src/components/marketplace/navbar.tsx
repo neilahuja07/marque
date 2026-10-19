@@ -49,7 +49,7 @@ export function Navbar() {
         <Link href="/" className="flex items-baseline gap-1.5">
           <span className="font-display text-[22px] font-medium text-ink">Scholar Stack</span>
           <span className="exam-code hidden text-[11px] text-slate sm:inline">
-            CIE · Grade 4–8
+            CIE · Grade 5–8
           </span>
         </Link>
 

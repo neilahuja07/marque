@@ -31,7 +31,7 @@ export const categories: Category[] = [
   {
     name: "Mathematics",
     slug: "mathematics",
-    description: "Grade 4 to Grade 8 — algebra to statistics.",
+    description: "Explore arithmetic, fractions, geometry, algebra, and more.",
     count: 428,
     accent: "sage",
   },
@@ -433,7 +433,7 @@ export const products: Product[] = [
 export const faqs: FAQ[] = [
   {
     question: "What exam boards do you cover?",
-    answer: "We cover Mathematics, Science, and English for Grades 4 through 8 — aligned with the Cambridge curriculum.",
+    answer: "We cover Mathematics, Science, and English for Grades 5 through 8 — aligned with the Cambridge curriculum.",
   },
   {
     question: "How do I download my purchases?",
@@ -449,6 +449,6 @@ export const faqs: FAQ[] = [
   },
 ];
 
-export const allLevels = ["Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8"];
+export const allLevels = ["Grade 5", "Grade 6", "Grade 7", "Grade 8"];
 export const allTypes: ProductType[] = ["Past Paper", "Mock Test", "Worksheet", "Revision Notes"];
 export const allSubjects = ["Mathematics", "Science", "English"];

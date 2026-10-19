@@ -8,7 +8,7 @@ const subjects = ["Science", "Mathematics", "English"] as const;
 
 type Subject = (typeof subjects)[number];
 
-const comingSoonSubjects: ReadonlySet<Subject> = new Set(["Mathematics", "English"]);
+const comingSoonSubjects: ReadonlySet<Subject> = new Set(["English"]);
 
 interface MegaMenuDesktopProps {
   subject: Subject;

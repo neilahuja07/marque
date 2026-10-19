@@ -42,7 +42,7 @@ export function AuthBranding() {
           <span className="font-medium">confidence.</span>
         </h1>
         <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-white/60">
-          Access premium Grade 4–8 study resources — curated by examiners, designed for results.
+          Access premium Grade 5–8 study resources — curated by examiners, designed for results.
         </p>
 
         {/* Trust points */}

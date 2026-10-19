@@ -4,10 +4,10 @@ import { FadeIn } from "@/components/ui/fade-in";
 
 export const metadata: Metadata = {
   title: "About — Scholar Stack",
-  description: "Learn about Scholar Stack's mission to provide premium Grade 4–8 study resources.",
+  description: "Learn about Scholar Stack's mission to provide premium Grade 5–8 study resources.",
   openGraph: {
     title: "About — Scholar Stack",
-    description: "Learn about Scholar Stack's mission to provide premium Grade 4–8 study resources.",
+    description: "Learn about Scholar Stack's mission to provide premium Grade 5–8 study resources.",
     type: "website",
   },
 };
@@ -27,7 +27,7 @@ export default function AboutPage() {
                 Premium study resources for ambitious students
               </h1>
               <p className="mt-5 text-[15px] leading-relaxed text-slate max-w-2xl mx-auto">
-                Scholar Stack was founded to help Grade 4–8 students access the highest-quality study materials — curated, verified, and designed to make revision genuinely effective.
+                Scholar Stack was founded to help Grade 5–8 students access the highest-quality study materials — curated, verified, and designed to make revision genuinely effective.
               </p>
             </FadeIn>
           </div>

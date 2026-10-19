@@ -12,7 +12,6 @@ const footerSections = [
   {
     title: "Grades",
     links: [
-      { label: "Grade 4", href: "/browse?grade=Grade%204" },
       { label: "Grade 5", href: "/browse?grade=Grade%205" },
       { label: "Grade 6", href: "/browse?grade=Grade%206" },
       { label: "Grade 7", href: "/browse?grade=Grade%207" },
