@@ -39,12 +39,16 @@ export function CategoryCard({
   description,
   accent,
   comingSoon = false,
+  linkLabel,
+  href,
 }: {
   name: string;
   slug: string;
   description: string;
   accent: string;
   comingSoon?: boolean;
+  linkLabel?: string;
+  href?: string;
 }) {
   const t = themes[accent];
 
@@ -80,7 +84,7 @@ export function CategoryCard({
 
   return (
     <Link
-      href={`/browse?subject=${name}`}
+      href={href ?? `/browse?subject=${name}`}
       className={`card-hover group relative flex flex-col justify-between overflow-hidden rounded-[var(--radius-card)] border border-ink/10 bg-white p-7 ${t.ring}`}
     >
       <div className={`absolute -right-8 -top-8 h-32 w-32 rounded-full ${t.iconWrap} opacity-40 blur-2xl`} />
@@ -96,7 +100,7 @@ export function CategoryCard({
         <p className="mt-1.5 text-[14px] leading-relaxed text-slate">{description}</p>
       </div>
       <span className="relative mt-8 inline-flex items-center gap-1.5 text-[13px] font-medium text-teal-dark transition-all group-hover:gap-2.5">
-        Browse {name.toLowerCase()}
+        {linkLabel ?? `Browse ${name.toLowerCase()}`}
         <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

@@ -42,7 +42,9 @@ export default function HomePage() {
                 <CategoryCard
                   key={c.slug}
                   {...c}
-                  comingSoon={c.slug !== "science"}
+                  comingSoon={c.slug === "english"}
+                  linkLabel={c.slug === "mathematics" ? "Browse Maths" : undefined}
+                  href={c.slug === "mathematics" ? "/browse?subject=Mathematics" : undefined}
                 />
               ))}
             </div>

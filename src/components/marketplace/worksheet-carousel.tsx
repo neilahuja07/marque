@@ -7,10 +7,6 @@ type CSSVars = React.CSSProperties & { [key: `--${string}`]: string | number };
 
 const WORKSHEETS = [
   {
-    src: "/assets/hero-worksheets/worksheet-1.png",
-    alt: "Mathematics worksheet preview 1",
-  },
-  {
     src: "/assets/hero-worksheets/worksheet-2.png",
     alt: "Mathematics worksheet preview 2",
   },
