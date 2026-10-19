@@ -59,6 +59,8 @@ export async function updateSession(request: NextRequest) {
     "/privacy", "/terms", "/cart", "/checkout",
     "/login", "/register", "/forgot-password",
     "/reset-password", "/verify-email",
+    // Search-engine crawler endpoints — must never be redirected to HTML.
+    "/sitemap.xml", "/robots.txt",
   ];
 
   const isPublicPage =
