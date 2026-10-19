@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   title: "Scholar Stack — Study Material Marked to the Syllabus",
   description:
     "Past papers, mock tests, worksheets and revision notes for Cambridge Mathematics, Science and English.",
+  verification: {
+    google: "pDk7rmNLuJpbsiMePkYSlAuiTyW6g-SXV9d09wuPwHg",
+  },
 };
 
 export default function RootLayout({
